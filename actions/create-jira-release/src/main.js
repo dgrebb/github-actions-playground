@@ -49,6 +49,7 @@ async function run() {
   const headers = createJiraHeaders(JIRA_API_USER, JIRA_API_TOKEN)
   let JIRA_PROJECT_NAME
   let JIRA_RELEASE_NAME
+  let suggestedIdentifier
 
   try {
     const JIRA_RELEASE_IDENTIFIER = core.getInput('JIRA_RELEASE_IDENTIFIER', {
@@ -111,18 +112,22 @@ async function run() {
       } catch (postError) {
         if (postError.message === '400') {
           // Suggest a new identifier if there's a conflict
-          const suggestedIdentifier = incrementIdentifier(
-            JIRA_RELEASE_IDENTIFIER
+          suggestedIdentifier = incrementIdentifier(JIRA_RELEASE_IDENTIFIER)
+          core.summary.addRaw(
+            `- <code>${JIRA_RELEASE_NAME}</code> is already present in Jira — check [${JIRA_PROJECT_NAME}](${JIRA_URL}/projects/${JIRA_PROJECT_KEY}). Does <code>${JIRA_PROJECT_KEY}-${suggestedIdentifier}</code> work for the team?`,
+            true
           )
           core.setFailed(
-            `[${JIRA_PROJECT_NAME}](https://dgrebb.atlassian.net/jira/software/projects/${JIRA_PROJECT_KEY}) already has a version named <code>${JIRA_RELEASE_NAME}</code>. ` +
-              `Suggested next version: <code>${JIRA_PROJECT_KEY}-${suggestedIdentifier}</code>. Please update the workflow inputs and re-run.`
+            `${JIRA_PROJECT_NAME} already has a version named ${JIRA_RELEASE_NAME}. ` +
+              `Suggested next version: ${JIRA_PROJECT_KEY}-${suggestedIdentifier}. Please update the workflow inputs and re-run.`
           )
         } else {
           throw postError
         }
       }
     }
+
+    core.summary.addCodeBlock(`${suggestedIdentifier}`)
 
     core.summary.write({ overwrite: false })
   } catch (error) {
