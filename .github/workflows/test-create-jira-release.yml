@@ -1,5 +1,5 @@
 name: "🧪 Tests: Create Jira Release"
-run-name: "🥽 Test Create Jira Release: ${{ github.event_name == 'pull_request' && format('PR #{0}: `{1}`', github.event.pull_request.number, github.event.pull_request.title) || format('latest `{0}`', github.ref_name) }}"
+run-name: "🥽 Test Create Jira Release: `${{ inputs.JIRA_PROJECT_KEY }}-R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
 
 on:
   workflow_dispatch:
@@ -26,8 +26,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: "Checkout, Install, Test"
+  create-jira-release:
+    name: "Creating Jira Fix Version `${{ inputs.JIRA_PROJECT_KEY }}-R${{ inputs.JIRA_RELEASE_IDENTIFIER }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
