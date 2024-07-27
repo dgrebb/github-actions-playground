@@ -21,6 +21,11 @@
     "node": ">=20"
   },
   "scripts": {
+    "act": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows --quiet",
+    "act.test": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows/build --quiet",
+    "at": "pnpm act.test",
+    "act.logs": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows/build",
+    "act.verbose": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows/build --verbose",
     "all": "pnpm fmt && pnpm lint && pnpm test && pnpm coverage && pnpm build",
     "ci-test": "npx jest",
     "coverage": "npx make-coverage-badge --output-path ./badges/coverage.svg",
@@ -29,8 +34,7 @@
     "fmtcheck": "prettier --check \"actions/**/*.js\" \"actions/**/__tests__/**/*.js\"",
     "lint": "pnpm -r lint",
     "build": "pnpm -r build",
-    "test": "npx jest",
-    "act": "act -s GITHUB_TOKEN=$(pass github/act-pat) -W .github/workflows/build"
+    "test": "npx jest"
   },
   "license": "MIT",
   "eslintConfig": {

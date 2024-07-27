@@ -14,6 +14,7 @@ const { wait } = __nccwpck_require__(6433)
 async function run() {
   try {
     const ms = core.getInput('milliseconds', { required: true })
+    const name = core.getInput('who-to-greet', { required: true })
 
     // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
     core.debug(`Waiting ${ms} milliseconds ...`)
@@ -22,6 +23,7 @@ async function run() {
     core.debug(new Date().toTimeString())
     await wait(parseInt(ms, 10))
     core.debug(new Date().toTimeString())
+    core.debug(`Hello, ${name}`)
 
     // Set outputs for other workflow steps to use
     core.setOutput('time', new Date().toTimeString())
