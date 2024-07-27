@@ -1,0 +1,55 @@
+name: "🧪 Tests: Create Jira Release"
+run-name: "🥽 Test Create Jira Release: ${{ github.event_name == 'pull_request' && format('PR #{0}: `{1}`', github.event.pull_request.number, github.event.pull_request.title) || format('latest `{0}`', github.ref_name) }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      JIRA_PROJECT_KEY:
+        type: choice
+        description: "The Jira project key this version will be created in."
+        required: true
+        options:
+          - DG
+          - RM
+
+      JIRA_RELEASE_IDENTIFIER:
+        description: "The version identifier, which will be concatenated with 'KEY-R-'."
+        required: true
+        default: "YY.QQ.N.N.0"
+
+      JIRA_RELEASE_DESCRIPTION:
+        description: "A description of the Jira version."
+        required: false
+
+concurrency:
+  group: "release-request"
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: "Checkout, Install, Test"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
+          token: ${{ github.token }}
+          show-progress: true
+          fetch-depth: 0
+
+      - name: 🛢 Install Dependencies
+        uses: ./.github/actions/install-cache-deps
+
+      - name: "Create Jira Release"
+        id: create-jira-release
+        uses: ./actions/create-jira-release
+        with:
+          JIRA_URL: ${{ vars.JIRA_URL }}
+          JIRA_API_URL: ${{ vars.JIRA_API_URL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_PROJECT_KEY: ${{ inputs.JIRA_PROJECT_KEY }}
+          JIRA_RELEASE_IDENTIFIER: ${{ inputs.JIRA_RELEASE_IDENTIFIER }}
+          JIRA_RELEASE_DESCRIPTION: ${{ inputs.JIRA_RELEASE_DESCRIPTION }}
+          JIRA_RELEASE_NOW: ${{ inputs.JIRA_RELEASE_NOW }}

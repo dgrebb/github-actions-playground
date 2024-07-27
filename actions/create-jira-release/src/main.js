@@ -21,18 +21,18 @@ async function run() {
     const JIRA_RELEASE_NOW = core.getInput('JIRA_RELEASE_NOW', {
       required: true
     })
-    const JIRA_PROJECT_ID = 'hamburger'
-    // const JIRA_PROJECT_ID = fetch(
-    //   `${JIRA_API_URL}/project/${JIRA_PROJECT_KEY}`,
-    //   {
-    //     method: 'GET',
-    //     headers: {
-    //       Authorization: `Basic ${JIRA_API_TOKEN}`,
-    //       'Content-Type': 'application/json',
-    //       Accept: 'application/json'
-    //     }
-    //   }
-    // ).data.id
+    // const JIRA_PROJECT_ID = 'hamburger'
+    const JIRA_PROJECT_ID = fetch(
+      `${JIRA_API_URL}/project/${JIRA_PROJECT_KEY}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Basic ${JIRA_API_TOKEN}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        }
+      }
+    ).data.id
 
     core.summary.addRaw('# Initial Vars')
 
@@ -53,35 +53,35 @@ async function run() {
 
     core.debug(`Create Jira Fix Version(s) ...`)
 
-    // const JIRA_VERSION_ID = await fetch(`${JIRA_API_URL}/version`, {
-    //   method: 'GET',
-    //   headers: {
-    //     Authorization: `Basic ${JIRA_API_TOKEN}`,
-    //     'Content-Type': 'application/json',
-    //     Accept: 'application/json'
-    //   },
-    //   body: JSON.stringify({
-    //     archived: false,
-    //     description: '${{ env.JIRA_RELEASE_DESCRIPTION }}',
-    //     name: '${{ env.JIRA_VERSION_NAME }}',
-    //     projectId: `${JIRA_PROJECT_ID}`,
-    //     released: `${JIRA_RELEASE_NOW} || 'false' }}`
-    //   })
-    // }).data.id
+    const JIRA_VERSION_ID = await fetch(`${JIRA_API_URL}/version`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Basic ${JIRA_API_TOKEN}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify({
+        archived: false,
+        description: '${{ env.JIRA_RELEASE_DESCRIPTION }}',
+        name: '${{ env.JIRA_VERSION_NAME }}',
+        projectId: `${JIRA_PROJECT_ID}`,
+        released: `${JIRA_RELEASE_NOW} || 'false' }}`
+      })
+    }).data.id
 
-    // const VERSION_URL = `${JIRA_URL}/projects/${JIRA_PROJECT_KEY}/versions/${JIRA_VERSION_ID}`
-    // const VERSION_NAME = `${JIRA_PROJECT_KEY}-R${JIRA_RELEASE_IDENTIFIER}`
+    const VERSION_URL = `${JIRA_URL}/projects/${JIRA_PROJECT_KEY}/versions/${JIRA_VERSION_ID}`
+    const VERSION_NAME = `${JIRA_PROJECT_KEY}-R${JIRA_RELEASE_IDENTIFIER}`
 
-    // core.summary.addRaw('# Generated Vars')
+    core.summary.addRaw('# Generated Vars')
 
-    // core.summary.addList([
-    //   `VERSION_URL: ${VERSION_URL}`,
-    //   `VERSION_NAME: ${VERSION_NAME}`
-    // ])
+    core.summary.addList([
+      `VERSION_URL: ${VERSION_URL}`,
+      `VERSION_NAME: ${VERSION_NAME}`
+    ])
 
-    // // Set outputs for other workflow steps to use
-    // core.setOutput('JIRA_VERSION_NAME', VERSION_NAME)
-    // core.setOutput('JIRA_VERSION_URL', VERSION_URL)
+    // Set outputs for other workflow steps to use
+    core.setOutput('JIRA_VERSION_NAME', VERSION_NAME)
+    core.setOutput('JIRA_VERSION_URL', VERSION_URL)
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
