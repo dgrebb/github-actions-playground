@@ -6,6 +6,36 @@
 
 const core = __nccwpck_require__(4237)
 
+/**
+ * Fetches data from the provided URL with the specified options.
+ * @param {string} url - The URL to fetch data from.
+ * @param {Object} options - The fetch options including method and headers.
+ * @returns {Promise<Object>} - The response data.
+ * @throws Will throw an error if the response is not ok.
+ */
+async function fetchAsync(url, options) {
+  const response = await fetch(url, options)
+  if (!response.ok) throw new Error(response.status)
+  return response.json()
+}
+
+/**
+ * Creates headers for Jira API requests.
+ * @param {string} user - The Jira API user.
+ * @param {string} token - The Jira API token.
+ * @returns {Object} - The headers object.
+ */
+function createJiraHeaders(user, token) {
+  return {
+    Authorization: `Basic ${Buffer.from(`${user}:${token}`).toString('base64')}`,
+    'Content-Type': 'application/json',
+    Accept: 'application/json'
+  }
+}
+
+/**
+ * Main function to run the GitHub Action.
+ */
 async function run() {
   core.debug('Setting up workflow values...')
   const JIRA_URL = core.getInput('JIRA_URL', { required: false })
@@ -16,6 +46,10 @@ async function run() {
     .getInput('JIRA_PROJECT_KEYS', { required: true })
     .split(',')
     .map(key => key.trim())
+
+  const headers = createJiraHeaders(JIRA_API_USER, JIRA_API_TOKEN)
+  let JIRA_PROJECT_NAME
+  let JIRA_RELEASE_NAME
 
   try {
     const JIRA_RELEASE_IDENTIFIER = core.getInput('JIRA_RELEASE_IDENTIFIER', {
@@ -34,28 +68,21 @@ async function run() {
         `${JIRA_API_URL}/project/${JIRA_PROJECT_KEY}`,
         {
           method: 'GET',
-          headers: {
-            Authorization: `Basic ${Buffer.from(`${JIRA_API_USER}:${JIRA_API_TOKEN}`).toString('base64')}`,
-            'Content-Type': 'application/json',
-            Accept: 'application/json'
-          }
+          headers
         }
       )
 
       const JIRA_PROJECT_ID = jiraProjectData.id
-      const JIRA_PROJECT_NAME = jiraProjectData.name
+      JIRA_PROJECT_NAME = jiraProjectData.name
 
       core.debug(`Creating Jira Fix Version for ${JIRA_PROJECT_NAME} ...`)
 
-      const JIRA_RELEASE_NAME = `${JIRA_PROJECT_KEY}-R${JIRA_RELEASE_IDENTIFIER}`
+      JIRA_RELEASE_NAME = `${JIRA_PROJECT_KEY}-R${JIRA_RELEASE_IDENTIFIER}`
 
+      // Create Jira version
       const jiraResponse = await fetchAsync(`${JIRA_API_URL}/version`, {
         method: 'POST',
-        headers: {
-          Authorization: `Basic ${Buffer.from(`${JIRA_API_USER}:${JIRA_API_TOKEN}`).toString('base64')}`,
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
-        },
+        headers,
         body: JSON.stringify({
           archived: false,
           description: JIRA_RELEASE_DESCRIPTION,
@@ -66,7 +93,6 @@ async function run() {
       })
 
       const JIRA_VERSION_ID = jiraResponse.id
-
       const JIRA_RELEASE_URL = `${JIRA_URL}/projects/${JIRA_PROJECT_KEY}/versions/${JIRA_VERSION_ID}`
 
       core.summary.addRaw(`## Release Details for ${JIRA_PROJECT_NAME}`, true)
@@ -74,7 +100,10 @@ async function run() {
         `- Release: [${JIRA_RELEASE_NAME}](${JIRA_RELEASE_URL})`,
         true
       )
-      core.summary.addRaw(`- Description: ${JIRA_RELEASE_DESCRIPTION}`, true)
+      core.summary.addRaw(
+        `- Description: ${JIRA_RELEASE_DESCRIPTION || 'N/A'}`,
+        true
+      )
 
       // Set outputs for other workflow steps to use
       core.setOutput('JIRA_RELEASE_NAME', JIRA_RELEASE_NAME)
@@ -84,25 +113,15 @@ async function run() {
     core.summary.write({ overwrite: false })
   } catch (error) {
     // Fail the workflow run if an error occurs
-    console.log('message:', error.message, '- end')
+    console.error('Error message:', error.message)
     if (error.message === '400') {
       core.setFailed(
-        `That version exists for one of the projects: ${JIRA_PROJECT_KEYS}`
+        `${JIRA_PROJECT_NAME} already has a version named ${JIRA_RELEASE_NAME} `
       )
     } else {
-      core.setFailed(
-        `Error: ${error.message}`,
-        "This is an uncaught error, we aren't yet tracking. Give us a heads up and we'll take a look."
-      )
+      core.setFailed(`Error: ${error.message}`)
     }
   }
-}
-
-async function fetchAsync(url, options) {
-  const response = await fetch(url, options)
-  if (!response.ok) throw new Error(response.status)
-  const data = await response.json()
-  return data
 }
 
 module.exports = {
