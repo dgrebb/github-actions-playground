@@ -2,15 +2,15 @@
   "name": "javascript-action",
   "description": "GitHub Actions JavaScript Template",
   "version": "0.0.0",
-  "author": "",
+  "author": "dgrebb",
   "private": true,
-  "homepage": "https://github.com/actions/javascript-action#readme",
+  "homepage": "https://github.com/dgrebb#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/javascript-action.git"
+    "url": "git+https://github.com/dgrebb/github-actions-playground.git"
   },
   "bugs": {
-    "url": "https://github.com/actions/javascript-action/issues"
+    "url": "https://github.com/dgrebb/github-actions-playground"
   },
   "keywords": [
     "GitHub",
@@ -27,12 +27,13 @@
     "bundle": "npm run format:write && npm run package",
     "ci-test": "npx jest",
     "coverage": "npx make-coverage-badge --output-path ./badges/coverage.svg",
-    "format:write": "npx prettier --write .",
-    "format:check": "npx prettier --check .",
+    "fmt": "prettier --write \"src/**/*.ts\" \"__tests__/**/*.ts\"",
+    "fmtcheck": "prettier --check \"src/**/*.ts\" \"__tests__/**/*.ts\"",
     "lint": "npx eslint . -c ./.github/linters/.eslintrc.yml",
-    "package": "npx ncc build src/index.js -o dist --source-map --license licenses.txt",
     "package:watch": "npm run package -- --watch",
     "test": "npx jest",
+    "build": "ncc build src/main.ts --v8-cache --source-map",
+    "package": "for dir in ./src/*; do if [ -d \"$dir\" ]; then (cd \"$dir\" && npm install && npx ncc build ./index.js -o dist/\"$dir\" --minify --license licenses.txt); fi; done",
     "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package"
   },
   "license": "MIT",
