@@ -1,11 +1,41 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 686:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const jira = __nccwpck_require__(2393)
+module.exports = { ...jira }
+
+
+/***/ }),
+
+/***/ 2393:
+/***/ ((module) => {
+
+/**
+ * Fetches data from the provided URL with the specified options.
+ * @param {string} url - The URL to fetch data from.
+ * @param {Object} options - The fetch options including method and headers.
+ * @returns {Promise<Object>} - The response data.
+ * @throws Will throw an error if the response is not ok.
+ */
+async function fetchAsync(url, options) {
+  const response = await fetch(url, options)
+  if (!response.ok) throw new Error(response.status)
+  return response.json()
+}
+
+module.exports = { fetchAsync }
+
+
+/***/ }),
+
 /***/ 9558:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(4237)
-const { fetchAsync } = __nccwpck_require__(903)
+const { fetchAsync } = __nccwpck_require__(686)
 
 /**
  * Creates headers for Jira API requests.
@@ -25094,14 +25124,6 @@ function version(uuid) {
 
 var _default = version;
 exports["default"] = _default;
-
-/***/ }),
-
-/***/ 903:
-/***/ ((module) => {
-
-module.exports = eval("require")("utils");
-
 
 /***/ }),
 

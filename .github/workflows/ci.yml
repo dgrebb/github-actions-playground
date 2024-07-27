@@ -5,9 +5,11 @@ on:
   pull_request:
     branches:
       - main
+      - develop
   push:
     branches:
       - main
+      - develop
   workflow_dispatch:
 
 permissions:
@@ -15,7 +17,7 @@ permissions:
 
 jobs:
   test-javascript:
-    name: JavaScript Tests
+    name: Check formatting, run tests, and validate Action bundles.
     runs-on: ubuntu-latest
 
     steps:
@@ -31,7 +33,7 @@ jobs:
       - name: 🛢 Install Dependencies
         uses: ./.github/actions/install-cache-deps
 
-      - name: 🧐 Check
+      - name: 🧐 Format
         id: pnpm-format-check
         run: pnpm fmt.check
 
@@ -43,6 +45,6 @@ jobs:
         id: pnpm-test
         run: pnpm test
 
-  test-actions:
-    name: GitHub Actions Tests
-    uses: ./.github/workflows/test.yml
+      - name: 📦 Validate Actions Bundles
+        id: validate-actions
+        uses: ./.github/workflows/check.yml

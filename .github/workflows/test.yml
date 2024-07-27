@@ -4,13 +4,10 @@ run-name: "🥽 Test ${{ github.event_name == 'pull_request' && format('PR #{0}:
 on:
   workflow_dispatch:
   workflow_call:
-  pull_request:
-  push:
-    branches: [develop, main]
 
 jobs:
   test:
-    name: "Checkout, Install, Test"
+    name: "Checkout, Install, Lint, Check, and Test"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -39,6 +36,7 @@ jobs:
           JIRA_URL: "some kind of test"
           JIRA_API_URL: "some kind of test"
           JIRA_API_TOKEN: "some kind of test"
+          JIRA_API_USER: "some kind of test"
           JIRA_PROJECT_KEYS: "some kind of test"
           JIRA_RELEASE_IDENTIFIER: "some kind of test"
           JIRA_RELEASE_DESCRIPTION: "some kind of test"
