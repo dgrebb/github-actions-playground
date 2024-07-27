@@ -3,6 +3,7 @@ run-name: "Testing: Hello World"
 
 on:
   workflow_dispatch:
+  workflow_call:
   pull_request:
   push:
     branches: [develop, main]

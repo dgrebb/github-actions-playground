@@ -30,7 +30,8 @@
     "test": "npx jest",
     "build": "pnpm -r build",
     "package": "pnpm -r pacakge",
-    "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package"
+    "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package",
+    "act": "act -W .github/workflows/test-all-actions.yml"
   },
   "license": "MIT",
   "eslintConfig": {
