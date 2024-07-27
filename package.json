@@ -17,9 +17,6 @@
     "Actions",
     "JavaScript"
   ],
-  "exports": {
-    ".": "./dist/index.js"
-  },
   "engines": {
     "node": ">=20"
   },
@@ -30,10 +27,9 @@
     "fmt": "prettier --write \"src/**/*.ts\" \"__tests__/**/*.ts\"",
     "fmtcheck": "prettier --check \"src/**/*.ts\" \"__tests__/**/*.ts\"",
     "lint": "npx eslint . -c ./.github/linters/.eslintrc.yml",
-    "package:watch": "npm run package -- --watch",
     "test": "npx jest",
-    "build": "for dir in ./actions/*; do if [ -d \"$dir\" ]; then (cd \"$dir\" && npm install && npx ncc build src/index.js -o build  --source-map --license licenses.txt); fi; done",
-    "package": "for dir in ./actions/*; do if [ -d \"$dir\" ]; then (cd \"$dir\" && npm install && npx ncc build src/index.js -o dist --minify --license licenses.txt); fi; done",
+    "build": "pnpm -r build",
+    "package": "pnpm -r pacakge",
     "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package"
   },
   "license": "MIT",
@@ -78,6 +74,7 @@
     "eslint-plugin-jest": "^28.6.0",
     "jest": "^29.7.0",
     "make-coverage-badge": "^1.2.0",
-    "prettier": "^3.3.3"
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1"
   }
 }
