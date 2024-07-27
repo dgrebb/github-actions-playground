@@ -31,7 +31,7 @@ async function run() {
       required: true
     })
     // const JIRA_PROJECT_ID = 'hamburger'
-    const JIRA_PROJECT_ID = fetch(
+    const JIRA_PROJECT_ID = await fetch(
       `${JIRA_API_URL}/project/${JIRA_PROJECT_KEY}`,
       {
         method: 'GET',
@@ -41,7 +41,9 @@ async function run() {
           Accept: 'application/json'
         }
       }
-    ).data.id
+    )
+
+    console.log('API Response for Project ID: ', JIRA_PROJECT_ID.json())
 
     core.summary.addRaw('# Initial Vars')
 
@@ -68,7 +70,7 @@ async function run() {
     const JIRA_RELEASE_NAME = `${JIRA_PROJECT_KEY}-R${JIRA_RELEASE_IDENTIFIER}`
 
     const JIRA_VERSION_ID = await fetch(`${JIRA_API_URL}/version`, {
-      method: 'GET',
+      method: 'POST',
       headers: {
         Authorization: `Basic ${JIRA_API_TOKEN}`,
         'Content-Type': 'application/json',
@@ -81,7 +83,9 @@ async function run() {
         projectId: `${JIRA_PROJECT_ID}`,
         released: `${JIRA_RELEASE_NOW} || 'false' }}`
       })
-    }).data.id
+    })
+
+    console.log('API Response for Version ID: ', JIRA_VERSION_ID.json())
 
     const VERSION_URL = `${JIRA_URL}/projects/${JIRA_PROJECT_KEY}/versions/${JIRA_VERSION_ID}`
 

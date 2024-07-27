@@ -29,6 +29,7 @@
     "act.verbose": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows/build --verbose",
     "all": "pnpm fmt && pnpm lint && pnpm test && pnpm coverage && pnpm build",
     "build": "pnpm i && pnpm -r build",
+    "build.watch": "pnpm i && pnpm -r build.watch",
     "ci-test": "npx jest",
     "coverage": "npx make-coverage-badge --output-path ./badges/coverage.svg",
     "eslint": "eslint",
