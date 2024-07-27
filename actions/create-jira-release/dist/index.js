@@ -61,7 +61,7 @@ async function run() {
 
     const JIRA_RELEASE_NAME = `${JIRA_PROJECT_KEY}-R${JIRA_RELEASE_IDENTIFIER}`
 
-    const JIRA_VERSION_ID = await fetchAsync(`${JIRA_API_URL}/version`, {
+    const jiraResponse = await fetchAsync(`${JIRA_API_URL}/version`, {
       method: 'POST',
       headers: new Headers({
         Authorization: `Basic ${Buffer.from(`${JIRA_API_USER}:${JIRA_API_TOKEN}`).toString('base64')}`,
@@ -76,25 +76,26 @@ async function run() {
         released: JIRA_RELEASE_NOW || false
       })
     })
+    const JIRA_VERSION_ID = jiraResponse.id
 
-    const VERSION_URL = `${JIRA_URL}/projects/${JIRA_PROJECT_KEY}/versions/${JIRA_VERSION_ID}`
+    const JIRA_RELEASE_URL = `${JIRA_URL}/projects/${JIRA_PROJECT_KEY}/versions/${JIRA_VERSION_ID}`
 
     /**
      * NOTE: Read more about this fun API
      * @see https://github.com/actions/toolkit/blob/main/packages/core/README.md#populating-job-summary
      */
-    core.summary.addRaw('# Generated Vars')
-
-    core.summary.addList([
-      `VERSION_URL: ${VERSION_URL}`,
-      `JIRA_RELEASE_NAME: ${JIRA_RELEASE_NAME}`
-    ])
+    core.summary.addRaw('# Generated Vars', true)
+    core.summary.addRaw(
+      `- Release: [${JIRA_RELEASE_NAME}](${JIRA_RELEASE_URL})`,
+      true
+    )
+    core.summary.addRaw(`- Description: ${JIRA_RELEASE_DESCRIPTION}`, true)
 
     core.summary.write({ overwrite: true })
 
     // Set outputs for other workflow steps to use
     core.setOutput('JIRA_RELEASE_NAME', JIRA_RELEASE_NAME)
-    core.setOutput('JIRA_VERSION_URL', VERSION_URL)
+    core.setOutput('JIRA_VERSION_URL', JIRA_RELEASE_URL)
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
