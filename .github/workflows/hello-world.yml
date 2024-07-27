@@ -22,8 +22,13 @@ jobs:
           show-progress: true
           fetch-depth: 0
 
-      - name: "Test: Hello World"
+      - name: "Hello World"
+        id: hello-world
         uses: ./actions/hello-world
         with:
           who-to-greet: "Sammy the Snail"
           milliseconds: 1000
+
+      - name: "Hello World Summary"
+        run: |
+          echo "Such time — ${{ steps.hello-world.outputs.time }}ms — Wow!" >> $GITHUB_STEP_SUMMARY
