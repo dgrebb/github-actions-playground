@@ -1,17 +1,17 @@
 const core = require('@actions/core')
 
 async function run() {
-  try {
-    core.debug('Setting up workflow values...')
-    const JIRA_URL = core.getInput('JIRA_URL', { required: false })
-    const JIRA_API_URL = core.getInput('JIRA_API_URL', { required: true })
-    const JIRA_API_TOKEN = core.getInput('JIRA_API_TOKEN', { required: true })
-    const JIRA_API_USER = core.getInput('JIRA_API_USER', { required: true })
-    const JIRA_PROJECT_KEYS = core
-      .getInput('JIRA_PROJECT_KEYS', { required: true })
-      .split(',')
-      .map(key => key.trim())
+  core.debug('Setting up workflow values...')
+  const JIRA_URL = core.getInput('JIRA_URL', { required: false })
+  const JIRA_API_URL = core.getInput('JIRA_API_URL', { required: true })
+  const JIRA_API_TOKEN = core.getInput('JIRA_API_TOKEN', { required: true })
+  const JIRA_API_USER = core.getInput('JIRA_API_USER', { required: true })
+  const JIRA_PROJECT_KEYS = core
+    .getInput('JIRA_PROJECT_KEYS', { required: true })
+    .split(',')
+    .map(key => key.trim())
 
+  try {
     const JIRA_RELEASE_IDENTIFIER = core.getInput('JIRA_RELEASE_IDENTIFIER', {
       required: true
     })
@@ -74,10 +74,17 @@ async function run() {
       core.setOutput('JIRA_VERSION_URL', JIRA_RELEASE_URL)
     }
 
-    core.summary.write({ overwrite: true })
+    core.summary.write({ overwrite: false })
   } catch (error) {
     // Fail the workflow run if an error occurs
-    core.setFailed(error.message)
+    console.log('message:', error.message, '- end')
+    if (error.message === '400') {
+      core.setFailed(
+        `That version exists for one of the projects: ${JIRA_PROJECT_KEYS}`
+      )
+    } else {
+      core.setFailed(error.message)
+    }
   }
 }
 
