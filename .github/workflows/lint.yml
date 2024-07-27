@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   lint:
-    name: Lint Codebase
+    name: Lint
     runs-on: ubuntu-latest
 
     steps:
