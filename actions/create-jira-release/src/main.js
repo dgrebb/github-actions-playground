@@ -16,6 +16,23 @@ function createJiraHeaders(user, token) {
 }
 
 /**
+ * Increments the numeric version at the end of the identifier.
+ * @param {string} identifier - The current identifier, e.g., "R24.07.27.07".
+ * @returns {string} - The new incremented identifier, e.g., "R24.07.27.08".
+ */
+function incrementIdentifier(identifier) {
+  const parts = identifier.split('.')
+  const lastPart = parts.pop()
+
+  const incrementedPart = (parseInt(lastPart, 10) + 1)
+    .toString()
+    .padStart(lastPart.length, '0')
+  parts.push(incrementedPart)
+
+  return parts.join('.')
+}
+
+/**
  * Main function to run the GitHub Action.
  */
 async function run() {
@@ -62,47 +79,56 @@ async function run() {
       JIRA_RELEASE_NAME = `${JIRA_PROJECT_KEY}-R${JIRA_RELEASE_IDENTIFIER}`
 
       // Create Jira version
-      const jiraResponse = await fetchAsync(`${JIRA_API_URL}/version`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          archived: false,
-          description: JIRA_RELEASE_DESCRIPTION,
-          name: JIRA_RELEASE_NAME,
-          projectId: JIRA_PROJECT_ID,
-          released: JIRA_RELEASE_NOW
+      try {
+        const jiraResponse = await fetchAsync(`${JIRA_API_URL}/version`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            archived: false,
+            description: JIRA_RELEASE_DESCRIPTION,
+            name: JIRA_RELEASE_NAME,
+            projectId: JIRA_PROJECT_ID,
+            released: JIRA_RELEASE_NOW
+          })
         })
-      })
 
-      const JIRA_VERSION_ID = jiraResponse.id
-      const JIRA_RELEASE_URL = `${JIRA_URL}/projects/${JIRA_PROJECT_KEY}/versions/${JIRA_VERSION_ID}`
+        const JIRA_RELEASE_ID = jiraResponse.id
+        const JIRA_RELEASE_URL = `${JIRA_URL}/projects/${JIRA_PROJECT_KEY}/versions/${JIRA_RELEASE_ID}`
 
-      core.summary.addRaw(`## Release Details for ${JIRA_PROJECT_NAME}`, true)
-      core.summary.addRaw(
-        `- Release: [${JIRA_RELEASE_NAME}](${JIRA_RELEASE_URL})`,
-        true
-      )
-      core.summary.addRaw(
-        `- Description: ${JIRA_RELEASE_DESCRIPTION || 'N/A'}`,
-        true
-      )
+        core.summary.addRaw(`## Release Details for ${JIRA_PROJECT_NAME}`, true)
+        core.summary.addRaw(
+          `- Release: [${JIRA_RELEASE_NAME}](${JIRA_RELEASE_URL})`,
+          true
+        )
+        core.summary.addRaw(
+          `- Description: ${JIRA_RELEASE_DESCRIPTION || 'N/A'}`,
+          true
+        )
 
-      // Set outputs for other workflow steps to use
-      core.setOutput('JIRA_RELEASE_NAME', JIRA_RELEASE_NAME)
-      core.setOutput('JIRA_VERSION_URL', JIRA_RELEASE_URL)
+        // Set outputs for other workflow steps to use
+        core.setOutput('JIRA_RELEASE_NAME', JIRA_RELEASE_NAME)
+        core.setOutput('JIRA_VERSION_URL', JIRA_RELEASE_URL)
+      } catch (postError) {
+        if (postError.message === '400') {
+          // Suggest a new identifier if there's a conflict
+          const suggestedIdentifier = incrementIdentifier(
+            JIRA_RELEASE_IDENTIFIER
+          )
+          core.setFailed(
+            `[${JIRA_PROJECT_NAME}](https://dgrebb.atlassian.net/jira/software/projects/${JIRA_PROJECT_KEY}) already has a version named <code>${JIRA_RELEASE_NAME}</code>. ` +
+              `Suggested next version: <code>${JIRA_PROJECT_KEY}-${suggestedIdentifier}</code>. Please update the workflow inputs and re-run.`
+          )
+        } else {
+          throw postError
+        }
+      }
     }
 
     core.summary.write({ overwrite: false })
   } catch (error) {
     // Fail the workflow run if an error occurs
     console.error('Error message:', error.message)
-    if (error.message === '400') {
-      core.setFailed(
-        `${JIRA_PROJECT_NAME} already has a version named ${JIRA_RELEASE_NAME} `
-      )
-    } else {
-      core.setFailed(`Error: ${error.message}`)
-    }
+    core.setFailed(`Error: ${error.message}`)
   }
 }
 

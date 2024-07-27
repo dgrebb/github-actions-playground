@@ -31,15 +31,15 @@ jobs:
       - name: 🛢 Install Dependencies
         uses: ./.github/actions/install-cache-deps
 
-      - name: Check Format
+      - name: 🧐 Check
         id: pnpm-format-check
         run: pnpm fmt.check
 
-      - name: Lint
+      - name: 🧹 Lint
         id: pnpm-lint
         run: pnpm lint
 
-      - name: Test
+      - name: 🎓 Test
         id: pnpm-test
         run: pnpm test
 
