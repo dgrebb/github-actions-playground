@@ -32,8 +32,8 @@
     "lint": "npx eslint . -c ./.github/linters/.eslintrc.yml",
     "package:watch": "npm run package -- --watch",
     "test": "npx jest",
-    "build": "ncc build src/main.ts --v8-cache --source-map",
-    "package": "for dir in ./src/*; do if [ -d \"$dir\" ]; then (cd \"$dir\" && npm install && npx ncc build ./index.js -o dist/\"$dir\" --minify --license licenses.txt); fi; done",
+    "build": "for dir in ./actions/*; do if [ -d \"$dir\" ]; then subdir=$(basename \"$dir\"); (cd \"$dir\" && npm install && npx ncc build src/index.js -o \"../../build/$subdir\" --source-map); fi; done",
+    "package": "for dir in ./actions/*; do if [ -d \"$dir\" ]; then subdir=$(basename \"$dir\"); (cd \"$dir\" && npm install && npx ncc build src/index.js -o \"../../dist/$subdir\" --minify --license licenses.txt); fi; done",
     "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package"
   },
   "license": "MIT",
