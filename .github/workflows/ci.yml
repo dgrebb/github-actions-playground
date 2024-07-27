@@ -1,5 +1,5 @@
-name: 🏋️ Continuous Integration
-run-name: "💪 CI: ${{ github.event_name == 'pull_request' && format('PR #{0}: `{1}`', github.event.pull_request.number, github.event.pull_request.title) || format('latest `{0}`', github.ref_name) }}"
+name: ♻ Continuous Integration
+run-name: "♻ CI: ${{ github.event_name == 'pull_request' && format('PR #{0}: `{1}`', github.event.pull_request.number, github.event.pull_request.title) || format('latest `{0}`', github.ref_name) }}"
 
 on:
   pull_request:
@@ -45,4 +45,4 @@ jobs:
 
   test-actions:
     name: GitHub Actions Tests
-    uses: ./.github/workflows/test-actions.yml
+    uses: ./.github/workflows/test.yml

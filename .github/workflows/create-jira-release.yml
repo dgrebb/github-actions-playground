@@ -1,4 +1,4 @@
-name: "🚥 Tests: Create Jira Release"
+name: "🚥 Create Jira Release"
 run-name: "🚥 Test Create Jira Releases: ${{ inputs.JIRA_PROJECT_KEYS }}: `R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
 
 on:

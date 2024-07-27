@@ -1,1 +1,2 @@
-export * from './jira'
+const jira = require('./jira')
+module.exports = { ...jira }

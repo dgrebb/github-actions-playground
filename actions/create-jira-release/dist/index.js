@@ -11477,7 +11477,7 @@ function forgivingBase64 (data) {
 }
 
 // https://fetch.spec.whatwg.org/#collect-an-http-quoted-string
-// tests: https://fetch.spec.whatwg.org/#example-http-quoted-string
+// https://fetch.spec.whatwg.org/#example-http-quoted-string
 /**
  * @param {string} input
  * @param {{ position: number }} position

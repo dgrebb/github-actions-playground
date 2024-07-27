@@ -1,0 +1,32 @@
+name: "Test: Create Jira Release"
+run-name: "Testing: Create Jira Release"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        # Note many defaults are explicity included below for implicit documentation
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
+          token: ${{ github.token }}
+          show-progress: true
+          fetch-depth: 0
+
+      - name: "Test: Create Jira Release"
+        uses: ./actions/create-jira-release
+        with:
+          JIRA_URL: "some kind of test"
+          JIRA_API_URL: "some kind of test"
+          JIRA_API_TOKEN: "some kind of test"
+          JIRA_API_USER: "some kind of test"
+          JIRA_PROJECT_KEY: "some kind of test"
+          JIRA_RELEASE_IDENTIFIER: "some kind of test"
+          JIRA_RELEASE_DESCRIPTION: "some kind of test"
+          JIRA_RELEASE_NOW: "false"
