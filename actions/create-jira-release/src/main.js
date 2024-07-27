@@ -9,7 +9,7 @@ async function run() {
     core.debug(`Setting up workflow values ...`)
     const JIRA_URL = core.getInput('JIRA_URL', { required: false })
     const JIRA_API_URL = core.getInput('JIRA_API_URL', { required: true })
-    const JIRA_API_TOKEN = core.getInput('JIRA_URLJIRA_API_TOKEN', {
+    const JIRA_API_TOKEN = core.getInput('JIRA_API_TOKEN', {
       required: true
     })
     const JIRA_PROJECT_KEY = core.getInput('JIRA_PROJECT_KEY', {
