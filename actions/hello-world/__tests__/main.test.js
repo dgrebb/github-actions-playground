@@ -26,7 +26,9 @@ describe('action', () => {
     getInputMock.mockImplementation(name => {
       switch (name) {
         case 'milliseconds':
-          return '500'
+          return '1000'
+        case 'who-to-greet':
+          return 'Sammy the Snail'
         default:
           return ''
       }
@@ -36,7 +38,10 @@ describe('action', () => {
     expect(runMock).toHaveReturned()
 
     // Verify that all of the core library functions were called correctly
-    expect(debugMock).toHaveBeenNthCalledWith(1, 'Waiting 500 milliseconds ...')
+    expect(debugMock).toHaveBeenNthCalledWith(
+      1,
+      'Waiting 1000 milliseconds ...'
+    )
     expect(debugMock).toHaveBeenNthCalledWith(
       2,
       expect.stringMatching(timeRegex)
@@ -45,6 +50,7 @@ describe('action', () => {
       3,
       expect.stringMatching(timeRegex)
     )
+    expect(debugMock).toHaveBeenNthCalledWith(4, 'Hello, Sammy the Snail.')
     expect(setOutputMock).toHaveBeenNthCalledWith(
       1,
       'time',
