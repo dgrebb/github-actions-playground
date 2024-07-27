@@ -44,7 +44,7 @@ async function run() {
       required: true
     })
     // const JIRA_PROJECT_ID = 'hamburger'
-    const JIRA_PROJECT_ID = await fetchAsync(
+    const jiraProjectData = await fetchAsync(
       `${JIRA_API_URL}/project/${JIRA_PROJECT_KEY}`,
       {
         method: 'GET',
@@ -55,34 +55,13 @@ async function run() {
         })
       }
     )
-
-    console.log('API Response for Project ID: ', JIRA_PROJECT_ID)
-
-    core.summary.addRaw('# Initial Vars')
-
-    core.summary.addList([
-      `JIRA_URL: ${JIRA_URL}`,
-      `JIRA_API_URL: ${JIRA_API_URL}`,
-      `JIRA_PROJECT_KEY: ${JIRA_PROJECT_KEY}`,
-      `JIRA_RELEASE_IDENTIFIER: ${JIRA_RELEASE_IDENTIFIER}`,
-      `JIRA_PROJECT_ID: ${JIRA_PROJECT_ID}`,
-      `JIRA_RELEASE_NOW: ${JIRA_RELEASE_NOW}`
-    ])
-
-    core.debug('--- VARIABLES ---')
-    core.debug(`JIRA_URL: ${JIRA_URL}`)
-    core.debug(`JIRA_API_URL: ${JIRA_API_URL}`)
-    core.debug(`JIRA_PROJECT_KEY: ${JIRA_PROJECT_KEY}`)
-    core.debug(`JIRA_PROJECT_ID: ${JIRA_PROJECT_ID}`)
-    core.debug(`JIRA_RELEASE_IDENTIFIER: ${JIRA_RELEASE_IDENTIFIER}`)
-    core.debug(`JIRA_RELEASE_DESCRIPTION: ${JIRA_RELEASE_DESCRIPTION}`)
-    core.debug(`JIRA_RELEASE_NOW: ${JIRA_RELEASE_NOW}`)
+    const JIRA_PROJECT_ID = jiraProjectData.id
 
     core.debug(`Create Jira Fix Version(s) ...`)
 
     const JIRA_RELEASE_NAME = `${JIRA_PROJECT_KEY}-R${JIRA_RELEASE_IDENTIFIER}`
 
-    const JIRA_VERSION_ID = await fetch(`${JIRA_API_URL}/version`, {
+    const JIRA_VERSION_ID = await fetchAsync(`${JIRA_API_URL}/version`, {
       method: 'POST',
       headers: new Headers({
         Authorization: `Basic ${Buffer.from(`${JIRA_API_USER}:${JIRA_API_TOKEN}`).toString('base64')}`,
@@ -91,23 +70,27 @@ async function run() {
       }),
       body: JSON.stringify({
         archived: false,
-        description: `${JIRA_RELEASE_DESCRIPTION}`,
-        name: `${JIRA_RELEASE_NAME}`,
-        projectId: `${JIRA_PROJECT_ID}`,
-        released: `${JIRA_RELEASE_NOW} || 'false' }}`
+        description: JIRA_RELEASE_DESCRIPTION,
+        name: JIRA_RELEASE_NAME,
+        projectId: JIRA_PROJECT_ID,
+        released: JIRA_RELEASE_NOW || false
       })
     })
 
-    console.log('API Response for Version ID: ', JIRA_VERSION_ID)
-
     const VERSION_URL = `${JIRA_URL}/projects/${JIRA_PROJECT_KEY}/versions/${JIRA_VERSION_ID}`
 
+    /**
+     * NOTE: Read more about this fun API
+     * @see https://github.com/actions/toolkit/blob/main/packages/core/README.md#populating-job-summary
+     */
     core.summary.addRaw('# Generated Vars')
 
     core.summary.addList([
       `VERSION_URL: ${VERSION_URL}`,
       `JIRA_RELEASE_NAME: ${JIRA_RELEASE_NAME}`
     ])
+
+    core.summary.write({ overwrite: true })
 
     // Set outputs for other workflow steps to use
     core.setOutput('JIRA_RELEASE_NAME', JIRA_RELEASE_NAME)
