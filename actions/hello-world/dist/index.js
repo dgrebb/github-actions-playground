@@ -23,7 +23,7 @@ async function run() {
     core.debug(new Date().toTimeString())
     await wait(parseInt(ms, 10))
     core.debug(new Date().toTimeString())
-    core.debug(`Hello, ${name}`)
+    core.debug(`Hello, ${name}.`)
 
     // Set outputs for other workflow steps to use
     core.setOutput('time', new Date().toTimeString())
