@@ -1,5 +1,5 @@
 name: "🚥 Tests: Create Jira Release"
-run-name: "🚥 Test Create Jira Release: `${{ inputs.JIRA_PROJECT_KEY }}-R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
+run-name: "🚥 Test Create Jira Release: `${{ inputs.JIRA_PROJECT_KEYS }}-R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
 
 on:
   workflow_dispatch:
@@ -26,10 +26,7 @@ on:
 
 jobs:
   create-jira-release:
-    strategy:
-      matrix:
-        project: ${{ fromJSON(format('[{0}]', join(',', split(inputs.JIRA_PROJECT_KEYS, ',')))) }}
-    name: "🚥 Creating Jira Fix Version `${{ matrix.project }}-R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
+    name: "🚥 Creating Jira Fix Versions for `${{ inputs.JIRA_PROJECT_KEYS }} — R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
     runs-on: ubuntu-latest
 
     steps:
@@ -53,7 +50,7 @@ jobs:
           JIRA_API_URL: ${{ vars.JIRA_API_URL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
           JIRA_API_USER: ${{ secrets.JIRA_API_USER }}
-          JIRA_PROJECT_KEY: ${{ inputs.JIRA_PROJECT_KEY }}
+          JIRA_PROJECT_KEYS: ${{ inputs.JIRA_PROJECT_KEYS }}
           JIRA_RELEASE_IDENTIFIER: ${{ inputs.JIRA_RELEASE_IDENTIFIER }}
           JIRA_RELEASE_DESCRIPTION: ${{ inputs.JIRA_RELEASE_DESCRIPTION }}
           JIRA_RELEASE_NOW: ${{ inputs.JIRA_RELEASE_NOW }}

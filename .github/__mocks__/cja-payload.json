@@ -4,7 +4,7 @@
     "JIRA_URL": "some kind of test",
     "JIRA_API_URL": "some kind of test",
     "JIRA_API_TOKEN": "some kind of test",
-    "JIRA_PROJECT_KEY": "some kind of test",
+    "JIRA_PROJECT_KEYS": "some kind of test",
     "JIRA_RELEASE_IDENTIFIER": "some kind of test",
     "JIRA_RELEASE_DESCRIPTION": "some kind of test",
     "JIRA_RELEASE_NOW": "some kind of test"
