@@ -1,5 +1,14 @@
 const core = require('@actions/core')
 
+// TODO: This must be configured as a shared resource with pnpm workspaces
+
+const fetchAsync = async (url, options) => {
+  const response = await fetch(url, options)
+  const data = await response.json()
+  // only proceed once second promise is resolved
+  return data
+}
+
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -25,7 +34,7 @@ async function run() {
       required: true
     })
     // const JIRA_PROJECT_ID = 'hamburger'
-    const JIRA_PROJECT_ID = await fetch(
+    const JIRA_PROJECT_ID = await fetchAsync(
       `${JIRA_API_URL}/project/${JIRA_PROJECT_KEY}`,
       {
         method: 'GET',
@@ -37,7 +46,7 @@ async function run() {
       }
     )
 
-    console.log('API Response for Project ID: ', JIRA_PROJECT_ID.json())
+    console.log('API Response for Project ID: ', JIRA_PROJECT_ID)
 
     core.summary.addRaw('# Initial Vars')
 
@@ -79,7 +88,7 @@ async function run() {
       })
     })
 
-    console.log('API Response for Version ID: ', JIRA_VERSION_ID.json())
+    console.log('API Response for Version ID: ', JIRA_VERSION_ID)
 
     const VERSION_URL = `${JIRA_URL}/projects/${JIRA_PROJECT_KEY}/versions/${JIRA_VERSION_ID}`
 
