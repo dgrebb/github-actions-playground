@@ -5,10 +5,14 @@ inputs:
     description: "Who to greet"
     required: true
     default: "World"
+  debug:
+    description: "Testing with `actions/*/build`"
+    required: true
+    default: "false"
 outputs:
   time: # id of output
     description: "The time we greeted you"
 runs:
   using: "node20" # enum of `0 = "node12", 1 = "node16", 2 = "nod20"`, oddly
   # NOTE: https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsusing
-  main: "dist/index.js"
+  main: ${{inputs.debug == "true" && "build/index.js" || "dist/index.js" }}
