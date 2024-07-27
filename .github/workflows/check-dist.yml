@@ -22,51 +22,51 @@ permissions:
 
 jobs:
   check-dist:
-    name: Check dist/
+    name: Check `actions/**/dist/`
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        id: checkout
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        id: setup-node
-        uses: actions/setup-node@v4
         with:
-          node-version-file: .node-version
-          cache: npm
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
+          token: ${{ github.token }}
+          show-progress: true
+          fetch-depth: 0
 
-      - name: Install Dependencies
-        id: install
-        run: npm ci
+      - name: 🛢 Install Dependencies
+        uses: ./.github/actions/install-cache-deps
 
-      - name: Build dist/ Directory
+      - name: Build `actions/**/dist` Directories
         id: build
-        run: npm run bundle
+        run: pnpm build
 
-      # This will fail the workflow if the `dist/` directory is different than
+      # This will fail the workflow if the `dist/` directories are different than
       # expected.
       - name: Compare Directories
         id: diff
         run: |
-          if [ ! -d dist/ ]; then
-            echo "Expected dist/ directory does not exist.  See status below:"
-            ls -la ./
-            exit 1
-          fi
-          if [ "$(git diff --ignore-space-at-eol --text dist/ | wc -l)" -gt "0" ]; then
-            echo "Detected uncommitted changes after build. See status below:"
-            git diff --ignore-space-at-eol --text dist/
-            exit 1
-          fi
+          for dir in ./actions/*; do
+            cd $dir
+            if [ ! -d dist/ ]; then
+              echo "Expected dist/ directory does not exist.  See status below:"
+              ls -la ./
+              exit 1
+            fi
+            if [ "$(git diff --ignore-space-at-eol --text dist/ | wc -l)" -gt "0" ]; then
+              echo "Detected uncommitted changes after build. See status below:"
+              git diff --ignore-space-at-eol --text dist/
+              exit 1
+            fi
+          done
 
-      # If `dist/` was different than expected, upload the expected version as a
+      # If a `dist/` was different than expected, upload the expected version as a
       # workflow artifact.
       - if: ${{ failure() && steps.diff.outcome == 'failure' }}
         name: Upload Artifact
         id: upload
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist/
+          name: actions
+          path: actions/
