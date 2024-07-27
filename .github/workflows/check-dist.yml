@@ -7,7 +7,7 @@
 # If this workflow is run from a feature branch, it will act as an additional CI
 # check and fail if the checked-in `dist/` directory does not match what is
 # expected from the build.
-name: Check Transpiled JavaScript
+name: 🧐 Check Transpiled JavaScript
 run-name: "🔬 Check ${{ github.event_name == 'pull_request' && format('PR #{0}: `{1}`', github.event.pull_request.number, github.event.pull_request.title) || format('latest `{0}`', github.ref_name) }}"
 
 on:
