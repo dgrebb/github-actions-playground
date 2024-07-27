@@ -18,47 +18,45 @@ jobs:
 
     steps:
       - name: Checkout
-        id: checkout
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        id: setup-node
-        uses: actions/setup-node@v4
         with:
-          node-version-file: .node-version
-          cache: npm
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
+          token: ${{ github.token }}
+          show-progress: true
+          fetch-depth: 0
 
-      - name: Install Dependencies
-        id: npm-ci
-        run: npm ci
+      - name: 🛢 Install Dependencies
+        uses: ./.github/actions/install-cache-deps
 
       - name: Check Format
-        id: npm-format-check
-        run: npm run format:check
+        id: pnpm-format-check
+        run: pnpm fmt.check
 
       - name: Lint
-        id: npm-lint
-        run: npm run lint
+        id: pnpm-lint
+        run: pnpm lint
 
       - name: Test
-        id: npm-ci-test
-        run: npm run ci-test
+        id: pnpm-ci-test
+        run: pnpm ci-test
 
   test-action:
-    name: GitHub Actions Test
+    name: GitHub Actions Tests
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        id: checkout
         uses: actions/checkout@v4
-
-      - name: Test Local Action
-        id: test-action
-        uses: ./
         with:
-          milliseconds: 1000
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
+          token: ${{ github.token }}
+          show-progress: true
+          fetch-depth: 0
 
-      - name: Print Output
-        id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
+      - name: 🛢 Install Dependencies
+        uses: ./.github/actions/install-cache-deps
+
+      - name: Test Actions
+        uses: ./.github/workflows/test-actions.yml

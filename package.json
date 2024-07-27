@@ -32,7 +32,7 @@
     "coverage": "npx make-coverage-badge --output-path ./badges/coverage.svg",
     "eslint": "eslint",
     "fmt": "prettier --write \"actions/**/*.js\" \"actions/**/__tests__/**/*.js\"",
-    "fmtcheck": "prettier --check \"actions/**/*.js\" \"actions/**/__tests__/**/*.js\"",
+    "fmt.check": "prettier --check \"actions/**/*.js\" \"actions/**/__tests__/**/*.js\"",
     "lint": "pnpm -r lint",
     "test": "npx jest"
   },
