@@ -1,5 +1,5 @@
-name: "🧪 Tests: Create Jira Release"
-run-name: "🥽 Test Create Jira Release: `${{ inputs.JIRA_PROJECT_KEY }}-R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
+name: "🚥 Tests: Create Jira Release"
+run-name: "🚥 Test Create Jira Release: `${{ inputs.JIRA_PROJECT_KEY }}-R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
 
 on:
   workflow_dispatch:
@@ -21,13 +21,19 @@ on:
         description: "A description of the Jira version."
         required: false
 
+      JIRA_RELEASE_NOW:
+        description: "Release the Version immediately?"
+        required: true
+        default: false
+        type: boolean
+
 concurrency:
   group: "release-request"
   cancel-in-progress: true
 
 jobs:
   create-jira-release:
-    name: "Creating Jira Fix Version `${{ inputs.JIRA_PROJECT_KEY }}-R${{ inputs.JIRA_RELEASE_IDENTIFIER }}"
+    name: "🚥 Creating Jira Fix Version `${{ inputs.JIRA_PROJECT_KEY }}-R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
