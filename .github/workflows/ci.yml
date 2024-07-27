@@ -42,22 +42,6 @@ jobs:
         id: pnpm-test
         run: pnpm test
 
-  test-action:
+  test-actions:
     name: GitHub Actions Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
-          ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
-          token: ${{ github.token }}
-          show-progress: true
-          fetch-depth: 0
-
-      - name: 🛢 Install Dependencies
-        uses: ./.github/actions/install-cache-deps
-
-      - name: Test Actions
-        uses: ./.github/workflows/test-actions.yml
+    uses: ./.github/workflows/test-actions.yml
