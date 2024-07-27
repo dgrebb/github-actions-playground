@@ -6,8 +6,8 @@
   "homepage": "https://github.com/dgrebb#readme",
   "main": "dist/index.js",
   "scripts": {
-    "build": "pnpm i && ncc build src/index.js -o build --source-map",
-    "package": "pnpm i && ncc build src/index.js -o dist --license licenses.txt",
+    "build.debug": "pnpm i && ncc build src/index.js -o build --source-map",
+    "build": "pnpm i && ncc build src/index.js -o dist --license licenses.txt",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bugs": {

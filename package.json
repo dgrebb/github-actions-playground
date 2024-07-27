@@ -22,14 +22,13 @@
   },
   "scripts": {
     "all": "pnpm fmt && pnpm lint && pnpm test && pnpm coverage && pnpm bundle",
-    "build": "pnpm -r build",
-    "bundle": "pnpm fmt && pnpm package",
+    "bundle": "pnpm fmt && pnpm build",
     "ci-test": "npx jest",
     "coverage": "npx make-coverage-badge --output-path ./badges/coverage.svg",
     "fmt": "prettier --write \"actions/**/*.js\" \"__tests__/**/*.js\"",
     "fmtcheck": "prettier --check \"actions/**/*.js\" \"__tests__/**/*.js\"",
     "lint": "pnpx eslint . -c ./.github/linters/.eslintrc.yml",
-    "package": "pnpm -r package",
+    "build": "pnpm -r build",
     "test": "npx jest",
     "act": "act -s GITHUB_TOKEN=$(pass github/act-pat) -W .github/workflows/build"
   },
