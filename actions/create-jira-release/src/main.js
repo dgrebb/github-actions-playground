@@ -37,8 +37,9 @@ async function run() {
       )
 
       const JIRA_PROJECT_ID = jiraProjectData.id
+      const JIRA_PROJECT_NAME = jiraProjectData.name
 
-      core.debug(`Create Jira Fix Version for ${JIRA_PROJECT_KEY} ...`)
+      core.debug(`Creating Jira Fix Version for ${JIRA_PROJECT_NAME} ...`)
 
       const JIRA_RELEASE_NAME = `${JIRA_PROJECT_KEY}-R${JIRA_RELEASE_IDENTIFIER}`
 
@@ -62,7 +63,7 @@ async function run() {
 
       const JIRA_RELEASE_URL = `${JIRA_URL}/projects/${JIRA_PROJECT_KEY}/versions/${JIRA_VERSION_ID}`
 
-      core.summary.addRaw(`# Release Details for ${JIRA_PROJECT_KEY}`, true)
+      core.summary.addRaw(`## Release Details for ${JIRA_PROJECT_NAME}`, true)
       core.summary.addRaw(
         `- Release: [${JIRA_RELEASE_NAME}](${JIRA_RELEASE_URL})`,
         true
@@ -83,7 +84,10 @@ async function run() {
         `That version exists for one of the projects: ${JIRA_PROJECT_KEYS}`
       )
     } else {
-      core.setFailed(error.message)
+      core.setFailed(
+        `Error: ${error.message}`,
+        "This is an uncaught error, we aren't yet tracking. Give us a heads up and we'll take a look."
+      )
     }
   }
 }
