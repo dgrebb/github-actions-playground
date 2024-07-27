@@ -1,5 +1,5 @@
 name: Dependabot Issues
-run-name: "Closing PR: `${{github.event.pull_request.title}}` and creating an issue instead."
+run-name: "🗑️ Closing PR: `${{github.event.pull_request.title}}` and creating an issue instead."
 on:
   workflow_dispatch:
   pull_request:
