@@ -8,7 +8,7 @@
   "scripts": {
     "build.debug": "pnpm i && ncc build src/index.js -o build --source-map",
     "build": "pnpm i && ncc build src/index.js -o dist --license licenses.txt",
-    "lint": "eslint ./src -c ../../.github/linters/.eslintrc.yml",
+    "lint": "eslint ./src -c ../../.eslintrc.yml",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bugs": {
