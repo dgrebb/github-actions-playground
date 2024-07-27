@@ -22,7 +22,8 @@
   },
   "scripts": {
     "act": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows --quiet",
-    "act.test": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows/build --quiet",
+    "act.all": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows --quiet",
+    "act.cjr": "act -s GITHUB_TOKEN=$(pass github/act-pat) --eventpath .github/__mocks__/cja-payload.json --workflows .github/workflows/build/test-create-jira-release.yml",
     "at": "pnpm act.test",
     "act.logs": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows/build",
     "act.verbose": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows/build --verbose",

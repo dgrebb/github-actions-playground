@@ -41,8 +41,8 @@ jobs:
           JIRA_API_TOKEN: "some kind of test"
           JIRA_PROJECT_KEY: "some kind of test"
           JIRA_VERSION_IDENTIFIER: "some kind of test"
-          JIRA_VERSION_DESCRIPTION: "some kind of test"
-          JIRA_VERSION_RELEASED: "some kind of test"
+          JIRA_RELEASE_DESCRIPTION: "some kind of test"
+          JIRA_RELEASE_NOW: "some kind of test"
 
       - name: "Summary"
         run: |

@@ -27,17 +27,18 @@ async function run() {
     const JIRA_RELEASE_NOW = core.getInput('JIRA_RELEASE_NOW', {
       required: true
     })
-    const JIRA_PROJECT_ID = fetch(
-      `${JIRA_API_URL}/project/${JIRA_PROJECT_KEY}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Basic ${JIRA_API_TOKEN}`,
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
-        }
-      }
-    ).data.id
+    const JIRA_PROJECT_ID = 'hamburger'
+    // const JIRA_PROJECT_ID = fetch(
+    //   `${JIRA_API_URL}/project/${JIRA_PROJECT_KEY}`,
+    //   {
+    //     method: 'GET',
+    //     headers: {
+    //       Authorization: `Basic ${JIRA_API_TOKEN}`,
+    //       'Content-Type': 'application/json',
+    //       Accept: 'application/json'
+    //     }
+    //   }
+    // ).data.id
 
     core.summary.addRaw('# Initial Vars')
 
@@ -48,6 +49,13 @@ async function run() {
       `JIRA_RELEASE_IDENTIFIER: ${JIRA_RELEASE_IDENTIFIER}`,
       `JIRA_PROJECT_ID: ${JIRA_PROJECT_ID}`
     ])
+
+    core.debug('--- VARIABLES ---')
+    core.debug(`JIRA_URL: ${JIRA_URL}`)
+    core.debug(`JIRA_API_URL: ${JIRA_API_URL}`)
+    core.debug(`JIRA_PROJECT_KEY: ${JIRA_PROJECT_KEY}`)
+    core.debug(`JIRA_RELEASE_IDENTIFIER: ${JIRA_RELEASE_IDENTIFIER}`)
+    core.debug(`JIRA_PROJECT_ID: ${JIRA_PROJECT_ID}`)
 
     core.debug(`Create Jira Fix Version(s) ...`)
 
@@ -60,7 +68,7 @@ async function run() {
     //   },
     //   body: JSON.stringify({
     //     archived: false,
-    //     description: '${{ env.JIRA_VERSION_DESCRIPTION }}',
+    //     description: '${{ env.JIRA_RELEASE_DESCRIPTION }}',
     //     name: '${{ env.JIRA_VERSION_NAME }}',
     //     projectId: `${JIRA_PROJECT_ID}`,
     //     released: `${JIRA_RELEASE_NOW} || 'false' }}`

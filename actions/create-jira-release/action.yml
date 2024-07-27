@@ -18,15 +18,15 @@ inputs:
   JIRA_PROJECT_KEY:
     description: "Jira version name."
     required: true
-  JIRA_VERSION_IDENTIFIER:
+  JIRA_RELEASE_IDENTIFIER:
     description: "Jira version identifier. E.g. 24.05.04.0 or 24.Q2.3.0."
     required: true
     default: "YY.QQ.NN.I"
-  JIRA_VERSION_DESCRIPTION:
+  JIRA_RELEASE_DESCRIPTION:
     description: "Jira version description."
     required: true
     default: ""
-  JIRA_VERSION_RELEASED:
+  JIRA_RELEASE_NOW:
     description: "Whether the version should be marked released."
     required: true
     default: "false"
