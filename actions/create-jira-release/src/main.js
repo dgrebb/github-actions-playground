@@ -22,7 +22,7 @@ async function run() {
     const JIRA_API_TOKEN = core.getInput('JIRA_API_TOKEN', {
       required: true
     })
-    const JIRA_API_USER = core.getInput('JIRA_API_TOKEN', {
+    const JIRA_API_USER = core.getInput('JIRA_API_USER', {
       required: true
     })
     const JIRA_PROJECT_KEY = core.getInput('JIRA_PROJECT_KEY', {
