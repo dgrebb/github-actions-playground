@@ -26,3 +26,4 @@ jobs:
         uses: ./actions/hello-world
         with:
           who-to-greet: "Sammy the Snail"
+          milliseconds: 1000
