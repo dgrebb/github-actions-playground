@@ -10,6 +10,7 @@ const core = __nccwpck_require__(4237)
 
 const fetchAsync = async (url, options) => {
   const response = await fetch(url, options)
+  if (!response.ok) throw new Error(response.status)
   const data = await response.json()
   // only proceed once second promise is resolved
   return data
@@ -25,6 +26,9 @@ async function run() {
     const JIRA_URL = core.getInput('JIRA_URL', { required: false })
     const JIRA_API_URL = core.getInput('JIRA_API_URL', { required: true })
     const JIRA_API_TOKEN = core.getInput('JIRA_API_TOKEN', {
+      required: true
+    })
+    const JIRA_API_USER = core.getInput('JIRA_API_TOKEN', {
       required: true
     })
     const JIRA_PROJECT_KEY = core.getInput('JIRA_PROJECT_KEY', {
@@ -44,11 +48,11 @@ async function run() {
       `${JIRA_API_URL}/project/${JIRA_PROJECT_KEY}`,
       {
         method: 'GET',
-        headers: {
-          Authorization: `Basic ${JIRA_API_TOKEN}`,
+        headers: new Headers({
+          Authorization: `Basic ${Buffer.from(`${JIRA_API_USER}:${JIRA_API_TOKEN}`).toString('base64')}`,
           'Content-Type': 'application/json',
           Accept: 'application/json'
-        }
+        })
       }
     )
 
@@ -80,11 +84,11 @@ async function run() {
 
     const JIRA_VERSION_ID = await fetch(`${JIRA_API_URL}/version`, {
       method: 'POST',
-      headers: {
-        Authorization: `Basic ${JIRA_API_TOKEN}`,
+      headers: new Headers({
+        Authorization: `Basic ${Buffer.from(`${JIRA_API_USER}:${JIRA_API_TOKEN}`).toString('base64')}`,
         'Content-Type': 'application/json',
         Accept: 'application/json'
-      },
+      }),
       body: JSON.stringify({
         archived: false,
         description: `${JIRA_RELEASE_DESCRIPTION}`,
