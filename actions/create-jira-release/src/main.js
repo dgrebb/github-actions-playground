@@ -78,7 +78,7 @@ async function run() {
      * NOTE: Read more about this fun API
      * @see https://github.com/actions/toolkit/blob/main/packages/core/README.md#populating-job-summary
      */
-    core.summary.addRaw('# Generated Vars', true)
+    core.summary.addRaw('# Release Details', true)
     core.summary.addRaw(
       `- Release: [${JIRA_RELEASE_NAME}](${JIRA_RELEASE_URL})`,
       true

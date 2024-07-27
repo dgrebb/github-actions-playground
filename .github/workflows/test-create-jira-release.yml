@@ -4,14 +4,6 @@ run-name: "🚥 Test Create Jira Release: `${{ inputs.JIRA_PROJECT_KEY }}-R${{ i
 on:
   workflow_dispatch:
     inputs:
-      JIRA_PROJECT_KEY:
-        type: choice
-        description: "The Jira project key this version will be created in."
-        required: true
-        options:
-          - DG
-          - RM
-
       JIRA_RELEASE_IDENTIFIER:
         description: "The version identifier, which will be concatenated with 'KEY-R-'."
         required: true
@@ -27,14 +19,19 @@ on:
         default: false
         type: boolean
 
-concurrency:
-  group: "release-request"
-  cancel-in-progress: true
+      JIRA_PROJECT_KEYS:
+        description: "A comma-separated list of Jira Project 'Keys'"
+        required: true
+        default: "DG" # or 'DG, RM, ETC, RFM' - you get it
 
 jobs:
   create-jira-release:
-    name: "🚥 Creating Jira Fix Version `${{ inputs.JIRA_PROJECT_KEY }}-R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
+    strategy:
+      matrix:
+        project: ${{ fromJSON(format('[{0}]', join(',', split(inputs.JIRA_PROJECT_KEYS, ',')))) }}
+    name: "🚥 Creating Jira Fix Version `${{ matrix.project }}-R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,7 +45,7 @@ jobs:
       - name: 🛢 Install Dependencies
         uses: ./.github/actions/install-cache-deps
 
-      - name: "Create Jira Release"
+      - name: "Create Jira Releases"
         id: create-jira-release
         uses: ./actions/create-jira-release
         with:

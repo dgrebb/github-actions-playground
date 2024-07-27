@@ -19,8 +19,9 @@ inputs:
     description: "Jira API User."
     required: true
   JIRA_PROJECT_KEY:
-    description: "Jira version name."
+    description: "An array of Jira Project 'Keys'. Use quotes for fancy characters."
     required: true
+    default: ["RM"]
   JIRA_RELEASE_IDENTIFIER:
     description: "Jira version identifier. E.g. 24.05.04.0 or 24.Q2.3.0."
     required: true
