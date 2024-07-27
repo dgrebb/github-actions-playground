@@ -1,0 +1,43 @@
+name: "Create Jira Release"
+description: "Create a Jira 'Fix Version' for one or more projects."
+
+inputs:
+  WORKING_DIR:
+    description: "Working Directory"
+    required: false
+    default: "."
+  JIRA_URL:
+    description: "Jira Instance URL."
+    required: true
+  JIRA_API_URL:
+    description: "Jira API URL."
+    required: true
+  JIRA_API_TOKEN:
+    description: "Jira API TOKEN."
+    required: true
+  JIRA_PROJECT_KEY:
+    description: "Jira version name."
+    required: true
+  JIRA_VERSION_IDENTIFIER:
+    description: "Jira version identifier. E.g. 24.05.04.0 or 24.Q2.3.0."
+    required: true
+    default: "YY.QQ.NN.I"
+  JIRA_VERSION_DESCRIPTION:
+    description: "Jira version description."
+    required: true
+    default: ""
+  JIRA_VERSION_RELEASED:
+    description: "Whether the version should be marked released."
+    required: true
+    default: "false"
+
+outputs:
+  JIRA_VERSION_NAME:
+    description: "The resulting Jira Version name(s)."
+  JIRA_VERSION_URL:
+    description: "The resulting Jira Version URL(s)."
+
+runs:
+  using: "node20" # enum of `0 = "node12", 1 = "node16", 2 = "nod20"`, oddly
+  # NOTE: https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsusing
+  main: dist/index.js

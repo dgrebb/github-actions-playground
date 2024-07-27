@@ -32,6 +32,18 @@ jobs:
           who-to-greet: "Sammy the Snail"
           milliseconds: 1000
 
+      - name: "Create Jira Release"
+        id: create-jira-release
+        uses: ./actions/create-jira-release
+        with:
+          JIRA_URL: "some kind of test"
+          JIRA_API_URL: "some kind of test"
+          JIRA_API_TOKEN: "some kind of test"
+          JIRA_PROJECT_KEY: "some kind of test"
+          JIRA_VERSION_IDENTIFIER: "some kind of test"
+          JIRA_VERSION_DESCRIPTION: "some kind of test"
+          JIRA_VERSION_RELEASED: "some kind of test"
+
       - name: "Summary"
         run: |
           echo "Such time — ${{ steps.hello-world.outputs.time }}ms — Wow!" >> $GITHUB_STEP_SUMMARY
