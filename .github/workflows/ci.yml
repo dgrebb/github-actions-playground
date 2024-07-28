@@ -50,4 +50,4 @@ jobs:
 
       - name: 📦 Validate Actions Bundles
         id: validate-actions
-        uses: ./.github/workflows/check.yml
+        uses: ./.github/workflows/actions-validate.yml
