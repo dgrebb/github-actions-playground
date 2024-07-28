@@ -23,8 +23,8 @@
   "scripts": {
     "act": "act --secret-file .github/workflows/act/.env --workflows .github/workflows --quiet",
     "act.all": "act --secret-file .github/workflows/act/.env --workflows .github/workflows --quiet",
-    "act.cjr": "act --secret-file .github/workflows/act/.env --eventpath .github/__mocks__/cja-payload.json --workflows .github/workflows/act/create-jira-release.yml",
-    "act.crp": "act --secret-file .github/workflows/act/.env --eventpath .github/__mocks__/crp-payload.json --workflows .github/workflows/act/create-release-page.yml",
+    "act.cjr": "act --secret-file .github/workflows/act/.env --eventpath .github/workflows/act/__mocks__/cja-payload.json --workflows .github/workflows/act/create-jira-release.yml",
+    "act.crp": "act --secret-file .github/workflows/act/.env --eventpath .github/workflows/act/__mocks__/crp-payload.json --workflows .github/workflows/act/create-release-page.yml",
     "at": "pnpm act.test",
     "act.logs": "act --secret-file .github/workflows/act/.env --workflows .github/workflows/act",
     "act.verbose": "act --secret-file .github/workflows/act/.env --workflows .github/workflows/act --verbose",

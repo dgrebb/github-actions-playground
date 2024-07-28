@@ -23,6 +23,7 @@ inputs:
   CONFLUENCE_SPACE_KEY:
     description: "Conflunece Space in which to create the page."
     required: true
+    default: "RM"
   CONFLUENCE_PAGE_TITLE:
     description: "Title of the Confluence Page."
     default: "$(date '+%y.%m.%d-%T')"
