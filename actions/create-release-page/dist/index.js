@@ -92,7 +92,7 @@ async function run() {
   const CONFLUENCE_API_TOKEN = core.getInput('CONFLUENCE_API_TOKEN', {
     required: true
   })
-  const CONFLUENCE_API_USER = core.getInput('CONFLUENCE_API_USERNAME', {
+  const CONFLUENCE_API_USER = core.getInput('CONFLUENCE_API_USER', {
     required: true
   })
 

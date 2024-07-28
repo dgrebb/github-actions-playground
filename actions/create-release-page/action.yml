@@ -17,7 +17,7 @@ inputs:
   CONFLUENCE_API_TOKEN:
     description: "Confluence API TOKEN."
     required: true
-  CONFLUENCE_API_USERNAME:
+  CONFLUENCE_API_USER:
     description: "Jira API USERNAME."
     required: true
   CONFLUENCE_SPACE_KEY:
