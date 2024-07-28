@@ -1,5 +1,5 @@
 const core = require('@actions/core')
-const { fetchAsync } = require('utils')
+const { fetchAsync, errorLogger } = require('utils')
 
 /**
  * Creates headers for Jira API requests.
@@ -100,7 +100,7 @@ async function run() {
       }
     }
 
-    const jiraResponse = await fetchAsync(
+    const confluenceResponse = await fetchAsync(
       `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_CONTENT_API_PATH}/pages`,
       {
         method: 'POST',
@@ -110,10 +110,9 @@ async function run() {
     )
 
     core.debug(`Creating Release Page under ${CONFLUENCE_SPACE_NAME} ...`)
-  } catch (error) {
-    // Fail the workflow run if an error occurs
-    console.error('Error message:', error.message)
-    core.setFailed(`Error: ${error.message}`)
+  } catch (confluenceErrors) {
+    errorLogger(confluenceErrors)
+    core.setFailed(`Error: ${confluenceErrors.message}`)
   }
   core.summary.write({ overwrite: false })
 }

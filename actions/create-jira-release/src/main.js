@@ -1,5 +1,5 @@
 const core = require('@actions/core')
-const { fetchAsync, jiraErrorLogger } = require('utils')
+const { fetchAsync, errorLogger } = require('utils')
 
 /**
  * Creates headers for Jira API requests.
@@ -123,7 +123,7 @@ async function run() {
         core.setOutput('JIRA_RELEASE_NAME', JIRA_RELEASE_NAME)
         core.setOutput('JIRA_VERSION_URL', JIRA_RELEASE_URL)
       } catch (jiraErrors) {
-        jiraErrorLogger(jiraErrors)
+        errorLogger(jiraErrors)
         if (jiraErrors.message === '400') {
           // Suggest a new identifier if there's a conflict
           suggestedIdentifier = incrementIdentifier(JIRA_RELEASE_IDENTIFIER)
