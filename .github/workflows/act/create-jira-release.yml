@@ -3,6 +3,26 @@ run-name: "Testing: Create Jira Release"
 
 on:
   workflow_dispatch:
+    inputs:
+      JIRA_RELEASE_IDENTIFIER:
+        description: "The version identifier, which will be concatenated with 'KEY-R-'."
+        required: true
+        default: "YY.QQ.N.N.0"
+
+      JIRA_RELEASE_DESCRIPTION:
+        description: "A description of the Jira version."
+        required: false
+
+      JIRA_RELEASE_NOW:
+        description: "Release the Version immediately?"
+        required: true
+        default: false
+        type: boolean
+
+      JIRA_PROJECT_KEYS:
+        description: "A comma-separated list of Jira Project 'Keys'"
+        required: true
+        default: "DG" # or 'DG, RM, ETC, RFM' - you get it
   workflow_call:
 
 jobs:

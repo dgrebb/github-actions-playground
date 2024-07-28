@@ -1,12 +1,9 @@
 {
   "action": "workflow_dispatch",
   "inputs": {
-    "JIRA_URL": "some kind of test",
-    "JIRA_API_URL": "some kind of test",
-    "JIRA_API_TOKEN": "some kind of test",
     "JIRA_PROJECT_KEYS": "some kind of test",
-    "JIRA_RELEASE_IDENTIFIER": "some kind of test",
-    "JIRA_RELEASE_DESCRIPTION": "some kind of test",
-    "JIRA_RELEASE_NOW": "some kind of test"
+    "JIRA_RELEASE_IDENTIFIER": "24.Q4.8.00",
+    "JIRA_RELEASE_DESCRIPTION": "Big release, WOW!",
+    "JIRA_RELEASE_NOW": "false"
   }
 }

@@ -21,12 +21,13 @@
     "node": ">=20"
   },
   "scripts": {
-    "act": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows --quiet",
-    "act.all": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows --quiet",
-    "act.cjr": "act -s GITHUB_TOKEN=$(pass github/act-pat) --eventpath .github/__mocks__/cja-payload.json --workflows .github/workflows/build/create-jira-release.yml",
+    "act": "act --secret-file .github/workflows/act/.env --workflows .github/workflows --quiet",
+    "act.all": "act --secret-file .github/workflows/act/.env --workflows .github/workflows --quiet",
+    "act.cjr": "act --secret-file .github/workflows/act/.env --eventpath .github/__mocks__/cja-payload.json --workflows .github/workflows/act/create-jira-release.yml",
+    "act.crp": "act --secret-file .github/workflows/act/.env --eventpath .github/__mocks__/crp-payload.json --workflows .github/workflows/act/create-release-page.yml",
     "at": "pnpm act.test",
-    "act.logs": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows/build",
-    "act.verbose": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows/build --verbose",
+    "act.logs": "act --secret-file .github/workflows/act/.env --workflows .github/workflows/act",
+    "act.verbose": "act --secret-file .github/workflows/act/.env --workflows .github/workflows/act --verbose",
     "all": "pnpm fmt && pnpm lint && pnpm test && pnpm coverage && pnpm build",
     "build": "pnpm i && pnpm -r build",
     "build.watch": "pnpm i && pnpm -r build.watch",
