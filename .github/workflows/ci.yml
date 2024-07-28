@@ -1,13 +1,15 @@
-name: 🏋️ Continuous Integration
-run-name: "💪 CI: ${{ github.event_name == 'pull_request' && format('PR #{0}: `{1}`', github.event.pull_request.number, github.event.pull_request.title) || format('latest `{0}`', github.ref_name) }}"
+name: ♻ Continuous Integration
+run-name: "♻ CI: ${{ github.event_name == 'pull_request' && format('PR #{0}: `{1}`', github.event.pull_request.number, github.event.pull_request.title) || format('latest `{0}`', github.ref_name) }}"
 
 on:
   pull_request:
     branches:
       - main
+      - develop
   push:
     branches:
       - main
+      - develop
   workflow_dispatch:
 
 permissions:
@@ -15,7 +17,7 @@ permissions:
 
 jobs:
   test-javascript:
-    name: JavaScript Tests
+    name: Check formatting, run tests, and validate Action bundles.
     runs-on: ubuntu-latest
 
     steps:
@@ -28,21 +30,24 @@ jobs:
           show-progress: true
           fetch-depth: 0
 
-      - name: 🛢 Install Dependencies
+      - name: Install Dependencies
         uses: ./.github/actions/install-cache-deps
 
-      - name: Check Format
+      - name: 🧐 Format
         id: pnpm-format-check
         run: pnpm fmt.check
 
-      - name: Lint
+      - name: 🧹 Lint
         id: pnpm-lint
         run: pnpm lint
 
-      - name: Test
+      - name: 🎓 Test
         id: pnpm-test
         run: pnpm test
 
-  test-actions:
-    name: GitHub Actions Tests
-    uses: ./.github/workflows/test-actions.yml
+      - name: where is the file
+        run: ls -la ./.github/workflows
+
+      - name: 📦 Validate Actions Bundles
+        id: validate-actions
+        uses: ./.github/workflows/actions-validate.yml

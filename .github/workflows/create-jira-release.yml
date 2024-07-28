@@ -1,0 +1,56 @@
+name: "🚥 Create Jira Release"
+run-name: "🚥 Create Jira Releases: ${{ inputs.JIRA_PROJECT_KEYS }}: `R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
+
+on:
+  workflow_dispatch:
+    inputs:
+      JIRA_RELEASE_IDENTIFIER:
+        description: "The version identifier, which will be concatenated with 'KEY-R-'."
+        required: true
+        default: "YY.QQ.N.N.0"
+
+      JIRA_RELEASE_DESCRIPTION:
+        description: "A description of the Jira version."
+        required: false
+
+      JIRA_RELEASE_NOW:
+        description: "Release the Version immediately?"
+        required: true
+        default: false
+        type: boolean
+
+      JIRA_PROJECT_KEYS:
+        description: "A comma-separated list of Jira Project 'Keys'"
+        required: true
+        default: "DG" # or 'DG, RM, ETC, RFM' - you get it
+
+jobs:
+  create-jira-release:
+    name: "🚥 Creating Jira Fix Versions for `${{ inputs.JIRA_PROJECT_KEYS }} — R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
+          token: ${{ github.token }}
+          show-progress: true
+          fetch-depth: 0
+
+      - name: 🛢 Install Dependencies
+        uses: ./.github/actions/install-cache-deps
+
+      - name: "Create Jira Releases"
+        id: create-jira-release
+        uses: ./actions/create-jira-release
+        with:
+          JIRA_URL: ${{ vars.JIRA_URL }}
+          JIRA_API_URL: ${{ vars.JIRA_API_URL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_API_USER: ${{ secrets.JIRA_API_USER }}
+          JIRA_PROJECT_KEYS: ${{ inputs.JIRA_PROJECT_KEYS }}
+          JIRA_RELEASE_IDENTIFIER: ${{ inputs.JIRA_RELEASE_IDENTIFIER }}
+          JIRA_RELEASE_DESCRIPTION: ${{ inputs.JIRA_RELEASE_DESCRIPTION }}
+          JIRA_RELEASE_NOW: ${{ inputs.JIRA_RELEASE_NOW }}

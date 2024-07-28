@@ -1,0 +1,32 @@
+name: "Create Release Page"
+run-name: "Create Confluence Release Page"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        # Note many defaults are explicity included below for implicit documentation
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
+          token: ${{ github.token }}
+          show-progress: true
+          fetch-depth: 0
+
+      - name: "Create Release Page"
+        uses: ./actions/create-release-page
+        with:
+          CONFLUENCE_URL: "wow secret"
+          CONFLUENCE_API_URL: "wow secret"
+          CONFLUENCE_API_PAGE_PATH: "wow secret"
+          CONFLUENCE_API_SPACE_PATH: "wow secret"
+          CONFLUENCE_API_TOKEN: "wow secret"
+          CONFLUENCE_API_USERNAME: "wow secret"
+          CONFLUENCE_SPACE_KEY: "wow secret"
+          CONFLUENCE_PAGE_TITLE: "wow secret"

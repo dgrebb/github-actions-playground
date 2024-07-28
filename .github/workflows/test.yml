@@ -1,15 +1,13 @@
-name: "🧪 Test Actions"
+name: "🚥 Test Actions"
 run-name: "🥽 Test ${{ github.event_name == 'pull_request' && format('PR #{0}: `{1}`', github.event.pull_request.number, github.event.pull_request.title) || format('latest `{0}`', github.ref_name) }}"
 
 on:
   workflow_dispatch:
   workflow_call:
-  pull_request:
-  push:
-    branches: [develop, main]
 
 jobs:
   test:
+    name: "Checkout, Install, Lint, Check, and Test"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,6 +28,19 @@ jobs:
         with:
           who-to-greet: "Sammy the Snail"
           milliseconds: 1000
+
+      - name: "Create Jira Release"
+        id: create-jira-release
+        uses: ./actions/create-jira-release
+        with:
+          JIRA_URL: "some kind of test"
+          JIRA_API_URL: "some kind of test"
+          JIRA_API_TOKEN: "some kind of test"
+          JIRA_API_USER: "some kind of test"
+          JIRA_PROJECT_KEYS: "some kind of test"
+          JIRA_RELEASE_IDENTIFIER: "some kind of test"
+          JIRA_RELEASE_DESCRIPTION: "some kind of test"
+          JIRA_RELEASE_NOW: "some kind of test"
 
       - name: "Summary"
         run: |

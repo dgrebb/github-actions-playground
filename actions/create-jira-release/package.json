@@ -1,5 +1,5 @@
 {
-  "name": "hello-world",
+  "name": "create-jira-release",
   "version": "0.0.0",
   "author": "dgrebb",
   "private": true,
@@ -25,6 +25,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "utils": "workspace:*",
     "@actions/core": "^1.10.1",
     "@actions/github": "^6.0.0"
   }

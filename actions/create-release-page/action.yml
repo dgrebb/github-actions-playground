@@ -1,0 +1,41 @@
+name: "🚥 Create Release Page"
+description: "Creates a release notes page in Confluence."
+
+inputs:
+  CONFLUENCE_URL:
+    description: "Confluence Instance URL."
+    required: true
+  CONFLUENCE_API_URL:
+    description: "Confluence API URL."
+    required: true
+  CONFLUENCE_API_PAGE_PATH:
+    description: "Confluence API path for Pages."
+    required: true
+  CONFLUENCE_API_SPACE_PATH:
+    description: "Confluence API path for Spaces."
+    required: true
+  CONFLUENCE_API_TOKEN:
+    description: "Confluence API TOKEN."
+    required: true
+  CONFLUENCE_API_USERNAME:
+    description: "Jira API USERNAME."
+    required: true
+  CONFLUENCE_SPACE_KEY:
+    description: "Conflunece Space in which to create the page."
+    required: true
+  CONFLUENCE_PAGE_TITLE:
+    description: "Title of the Confluence Page."
+    default: "$(date '+%y.%m.%d-%T')"
+  JIRA_VERSION_NAMES:
+    description: "Jira Version name."
+  JIRA_VERSION_LINKS:
+    description: "A link to the Jira version if included."
+
+outputs:
+  CONFLUENCE_SPACE_ID:
+    description: "The Confluence Space ID"
+
+runs:
+  using: "node20" # enum of `0 = "node12", 1 = "node16", 2 = "nod20"`, oddly
+  # NOTE: https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsusing
+  main: dist/index.js
