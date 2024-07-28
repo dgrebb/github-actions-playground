@@ -37,7 +37,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
           token: ${{ github.token }}
           show-progress: true
-          fetch-depth: 0
+          fetch-depth: 3
 
       - name: 🛢 Install Dependencies
         uses: ./.github/actions/install-cache-deps
