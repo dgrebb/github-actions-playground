@@ -86,7 +86,7 @@ async function run() {
       {
         method: 'POST',
         headers,
-        body: JSON.stringify({
+        body: {
           type: 'long',
           title: CONFLUENCE_PAGE_TITLE,
           space: {
@@ -95,7 +95,7 @@ async function run() {
           spaceId: CONFLUENCE_SPACE_ID,
           body: {
             storage: {
-              value: '<h1>heres the page</h1>',
+              value: JSON.stringify("<h1>heres the page</h1>"),
               representation: 'storage'
             }
           }

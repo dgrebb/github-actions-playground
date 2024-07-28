@@ -117,24 +117,27 @@ async function run() {
     CONFLUENCE_SPACE_ID = confluenceSpaceData.id
     CONFLUENCE_SPACE_NAME = confluenceSpaceData.name
 
-    const jiraResponse = await fetchAsync(`${CONFLUENCE_API_URL}/version`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        type: 'long',
-        title: CONFLUENCE_PAGE_TITLE,
-        space: {
-          key: CONFLUENCE_SPACE_KEY
-        },
-        spaceId: CONFLUENCE_SPACE_ID,
-        body: {
-          storage: {
-            value: '<h1>heres the page</h1>',
-            representation: 'storage'
+    const jiraResponse = await fetchAsync(
+      `${CONFLUENCE_URL}/${CONFLUENCE_API_PAGE_PATH}`,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          type: 'long',
+          title: CONFLUENCE_PAGE_TITLE,
+          space: {
+            key: CONFLUENCE_SPACE_KEY
+          },
+          spaceId: CONFLUENCE_SPACE_ID,
+          body: {
+            storage: {
+              value: '"<h1>heres the page</h1>"',
+              representation: 'storage'
+            }
           }
-        }
-      })
-    })
+        })
+      }
+    )
 
     core.debug(`Creating Release Page under ${CONFLUENCE_SPACE_NAME} ...`)
   } catch (error) {

@@ -8,22 +8,13 @@ on:
         description: "The Confluence space key in which this page will be created."
         required: true
         default: "RM"
+
       CONFLUENCE_PAGE_TITLE:
         description: "The title for the Confluence Page."
-  workflow_call:
-    inputs:
-      CONFLUENCE_SPACE_KEY:
-        description: "The Confluence space key in which this page will be created."
-        required: true
-        default: "RM"
-      CONFLUENCE_PAGE_TITLE:
-        description: "The title for the Confluence Page."
-  pull_request:
-  push:
-    branches: [develop, main]
 
 jobs:
   test:
+    name: Create Release Page
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
