@@ -23,10 +23,9 @@ on:
         description: "A comma-separated list of Jira Project 'Keys'"
         required: true
         default: "DG" # or 'DG, RM, ETC, RFM' - you get it
-  workflow_call:
 
 jobs:
-  test:
+  create-jira-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -42,11 +41,11 @@ jobs:
       - name: "Test: Create Jira Release"
         uses: ./actions/create-jira-release
         with:
-          JIRA_URL: "some kind of test"
-          JIRA_API_URL: "some kind of test"
-          JIRA_API_KEY: "some kind of test"
-          JIRA_API_USER: "some kind of test"
-          JIRA_PROJECT_KEY: "some kind of test"
-          JIRA_RELEASE_IDENTIFIER: "some kind of test"
-          JIRA_RELEASE_DESCRIPTION: "some kind of test"
-          JIRA_RELEASE_NOW: "false"
+          JIRA_URL: ${{ vars.JIRA_URL }}
+          JIRA_API_PATH: ${{ vars.JIRA_API_PATH }}
+          JIRA_API_KEY: ${{ secrets.JIRA_API_KEY }}
+          JIRA_API_USER: ${{ secrets.JIRA_API_USER }}
+          JIRA_PROJECT_KEYS: ${{ inputs.JIRA_PROJECT_KEYS }}
+          JIRA_RELEASE_IDENTIFIER: ${{ inputs.JIRA_RELEASE_IDENTIFIER }}
+          JIRA_RELEASE_DESCRIPTION: ${{ inputs.JIRA_RELEASE_DESCRIPTION }}
+          JIRA_RELEASE_NOW: ${{ inputs.JIRA_RELEASE_NOW }}

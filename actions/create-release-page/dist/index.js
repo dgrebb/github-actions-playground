@@ -1,16 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 686:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-const jira = __nccwpck_require__(2393)
-module.exports = { ...jira }
-
-
-/***/ }),
-
-/***/ 2393:
+/***/ 5998:
 /***/ ((module) => {
 
 /**
@@ -26,7 +17,25 @@ async function fetchAsync(url, options) {
   return response.json()
 }
 
-module.exports = { fetchAsync }
+function errorLogger(errorArray) {
+  errorArray.map(error => {
+    const { status, code, title, details } = error
+    console.error(`----------------- API ERROR -----------------`)
+    console.table(error)
+    console.error(`----------------- END ERROR -----------------`)
+  })
+}
+
+module.exports = { fetchAsync, errorLogger }
+
+
+/***/ }),
+
+/***/ 686:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const api = __nccwpck_require__(5998)
+module.exports = { ...api }
 
 
 /***/ }),
@@ -79,14 +88,17 @@ async function run() {
   const CONFLUENCE_PAGE_TITLE = core.getInput('CONFLUENCE_PAGE_TITLE', {
     required: true
   })
-  const CONFLUENCE_URL = core.getInput('CONFLUENCE_URL', { required: false })
+  const CONFLUENCE_URL = core.getInput('CONFLUENCE_URL', { required: true })
   const CONFLUENCE_API_URL = core.getInput('CONFLUENCE_API_URL', {
-    required: true
+    required: false
   })
-  const CONFLUENCE_API_PAGE_PATH = core.getInput('CONFLUENCE_API_PAGE_PATH', {
-    required: true
-  })
-  const CONFLUENCE_API_SPACE_PATH = core.getInput('CONFLUENCE_API_SPACE_PATH', {
+  const CONFLUENCE_CONTENT_API_PATH = core.getInput(
+    'CONFLUENCE_CONTENT_API_PATH',
+    {
+      required: true
+    }
+  )
+  const CONFLUENCE_META_API_PATH = core.getInput('CONFLUENCE_META_API_PATH', {
     required: true
   })
   const CONFLUENCE_API_KEY = core.getInput('CONFLUENCE_API_KEY', {
@@ -100,14 +112,15 @@ async function run() {
     CONFLUENCE_API_USER,
     CONFLUENCE_API_KEY
   )
+
   let CONFLUENCE_SPACE_NAME
   let CONFLUENCE_SPACE_ID
-  let suggestedIdentifier
+  let suggestedPageTitle
 
   try {
     // Fetch Confluence Space data
     const confluenceSpaceData = await fetchAsync(
-      `${CONFLUENCE_URL}/${CONFLUENCE_API_SPACE_PATH}/${CONFLUENCE_SPACE_KEY}`,
+      `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_META_API_PATH}/space/${CONFLUENCE_SPACE_KEY}`,
       {
         method: 'GET',
         headers
@@ -117,25 +130,27 @@ async function run() {
     CONFLUENCE_SPACE_ID = confluenceSpaceData.id
     CONFLUENCE_SPACE_NAME = confluenceSpaceData.name
 
+    const requestBody = {
+      type: 'long',
+      title: CONFLUENCE_PAGE_TITLE,
+      space: {
+        key: CONFLUENCE_SPACE_KEY
+      },
+      spaceId: CONFLUENCE_SPACE_ID,
+      body: {
+        storage: {
+          value: JSON.stringify('<h1>heres the page</h1>'),
+          representation: 'storage'
+        }
+      }
+    }
+
     const jiraResponse = await fetchAsync(
-      `${CONFLUENCE_URL}/${CONFLUENCE_API_PAGE_PATH}`,
+      `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_CONTENT_API_PATH}/pages`,
       {
         method: 'POST',
         headers,
-        body: JSON.stringify({
-          type: 'long',
-          title: CONFLUENCE_PAGE_TITLE,
-          space: {
-            key: CONFLUENCE_SPACE_KEY
-          },
-          spaceId: CONFLUENCE_SPACE_ID,
-          body: {
-            storage: {
-              value: '"<h1>heres the page</h1>"',
-              representation: 'storage'
-            }
-          }
-        })
+        body: JSON.stringify(requestBody)
       }
     )
 

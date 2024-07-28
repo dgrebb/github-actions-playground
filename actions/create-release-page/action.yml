@@ -7,11 +7,11 @@ inputs:
     required: true
   CONFLUENCE_API_URL:
     description: "Confluence API URL."
-    required: true
-  CONFLUENCE_API_PAGE_PATH:
+    required: false
+  CONFLUENCE_CONTENT_API_PATH:
     description: "Confluence API path for Pages."
     required: true
-  CONFLUENCE_API_SPACE_PATH:
+  CONFLUENCE_META_API_PATH:
     description: "Confluence API path for Spaces."
     required: true
   CONFLUENCE_API_KEY:

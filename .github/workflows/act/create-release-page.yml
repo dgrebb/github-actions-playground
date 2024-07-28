@@ -13,7 +13,7 @@ on:
         description: "The title for the Confluence Page."
 
 jobs:
-  test:
+  create-release-page:
     name: Create Release Page
     runs-on: ubuntu-latest
     steps:
@@ -32,8 +32,8 @@ jobs:
         with:
           CONFLUENCE_URL: ${{ vars.CONFLUENCE_URL }}
           CONFLUENCE_API_URL: ${{ vars.CONFLUENCE_API_URL }}
-          CONFLUENCE_API_PAGE_PATH: ${{ vars.CONFLUENCE_API_PAGE_PATH }}
-          CONFLUENCE_API_SPACE_PATH: ${{ vars.CONFLUENCE_API_SPACE_PATH }}
+          CONFLUENCE_CONTENT_API_PATH: ${{ vars.CONFLUENCE_CONTENT_API_PATH }}
+          CONFLUENCE_META_API_PATH: ${{ vars.CONFLUENCE_META_API_PATH }}
           CONFLUENCE_API_USER: "${{ secrets.CONFLUENCE_API_USER }}"
           CONFLUENCE_API_KEY: "${{ secrets.CONFLUENCE_API_KEY }}"
           CONFLUENCE_SPACE_KEY: "${{ inputs.CONFLUENCE_SPACE_KEY }}"

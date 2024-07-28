@@ -1,2 +1,2 @@
-const jira = require('./jira')
-module.exports = { ...jira }
+const api = require('./api')
+module.exports = { ...api }

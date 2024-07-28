@@ -22,7 +22,7 @@ on:
       JIRA_PROJECT_KEYS:
         description: "A comma-separated list of Jira Project 'Keys'"
         required: true
-        default: "DG" # or 'DG, RM, ETC, RFM' - you get it
+        default: "DG"
 
 jobs:
   create-jira-release:
@@ -47,7 +47,7 @@ jobs:
         uses: ./actions/create-jira-release
         with:
           JIRA_URL: ${{ vars.JIRA_URL }}
-          JIRA_API_URL: ${{ vars.JIRA_API_URL }}
+          JIRA_API_PATH: ${{ vars.JIRA_API_PATH }}
           JIRA_API_KEY: ${{ secrets.JIRA_API_KEY }}
           JIRA_API_USER: ${{ secrets.JIRA_API_USER }}
           JIRA_PROJECT_KEYS: ${{ inputs.JIRA_PROJECT_KEYS }}

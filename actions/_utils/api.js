@@ -11,4 +11,13 @@ async function fetchAsync(url, options) {
   return response.json()
 }
 
-module.exports = { fetchAsync }
+function errorLogger(errorArray) {
+  errorArray.map(error => {
+    const { status, code, title, details } = error
+    console.error(`----------------- API ERROR -----------------`)
+    console.table(error)
+    console.error(`----------------- END ERROR -----------------`)
+  })
+}
+
+module.exports = { fetchAsync, errorLogger }
