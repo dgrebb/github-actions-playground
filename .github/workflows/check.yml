@@ -55,7 +55,7 @@ jobs:
             cd $dir
             if [ ! -d "dist/" ]; then
               if [ "$(basename "$dir")" = "_utils" ]; then
-                continue;
+                break;
               else
                 echo "Expected dist/ directory does not exist in $dir. See status below:"
                 ls -la ./
