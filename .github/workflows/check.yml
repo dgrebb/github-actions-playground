@@ -11,14 +11,15 @@ name: 📦 Check Action Bundles
 run-name: "🔬 Check ${{ github.event_name == 'pull_request' && format('PR #{0}: `{1}`', github.event.pull_request.number, github.event.pull_request.title) || format('latest `{0}`', github.ref_name) }}"
 
 on:
-  workflow_call:
   workflow_dispatch:
   pull_request:
     branches:
       - main
+      - develop
   push:
     branches:
       - main
+      - develop
 
 permissions:
   contents: read
@@ -36,7 +37,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
           token: ${{ github.token }}
           show-progress: true
-          fetch-depth: 0
+          fetch-depth: 3
 
       - name: 🛢 Install Dependencies
         uses: ./.github/actions/install-cache-deps
@@ -54,7 +55,7 @@ jobs:
             cd $dir
             if [ ! -d "dist/" ]; then
               if [ "$(basename "$dir")" = "_utils" ]; then
-                continue;
+                break;
               else
                 echo "Expected dist/ directory does not exist in $dir. See status below:"
                 ls -la ./
