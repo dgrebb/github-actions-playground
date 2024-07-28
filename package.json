@@ -27,8 +27,8 @@
     "act.crp": "act --quiet --secret-file .github/workflows/act/.secrets --var-file .github/workflows/act/.env --eventpath .github/workflows/act/__mocks__/crp-payload.json --workflows .github/workflows/act/create-release-page.yml",
     "act.verbose": "act --secret-file .github/workflows/act/.secrets --var-file .github/workflows/act/.env --workflows .github/workflows/act --verbose",
     "all": "pnpm fmt && pnpm lint && pnpm test && pnpm coverage && pnpm build",
-    "build": "pnpm i && pnpm -r build",
-    "build.watch": "pnpm i && pnpm -r build.watch",
+    "build": "pnpm -r build",
+    "build.watch": "nodemon",
     "ci-test": "npx jest",
     "coverage": "npx make-coverage-badge --output-path ./badges/coverage.svg",
     "eslint": "eslint",
@@ -36,6 +36,19 @@
     "fmt.check": "prettier --check \"actions/**/*.js\" \"actions/**/__tests__/**/*.js\"",
     "lint": "pnpm -r lint",
     "test": "npx jest"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "**/__tests__/**",
+      "**/__mocks__/**",
+      "**/dist/*",
+      "**/build/*"
+    ],
+    "watch": [
+      "./actions/**/*"
+    ],
+    "exec": "pnpm build",
+    "delay": 2500
   },
   "license": "ISC",
   "eslintConfig": {
@@ -79,6 +92,7 @@
     "eslint-plugin-jest": "^28.6.0",
     "jest": "^29.7.0",
     "make-coverage-badge": "^1.2.0",
+    "nodemon": "^3.1.4",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1"
   }

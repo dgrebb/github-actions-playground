@@ -74,43 +74,50 @@ async function run() {
 
   try {
     // Fetch Confluence Space data
+    console.log('ERRORS ---------------------------------------------- ')
+    console.log(
+      `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_META_API_PATH}/space/${CONFLUENCE_SPACE_KEY}`
+    )
+
     const confluenceSpaceData = await fetchAsync(
       `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_META_API_PATH}/space/${CONFLUENCE_SPACE_KEY}`,
       {
         method: 'GET',
-        headers
-      }
-    )
-
-    CONFLUENCE_SPACE_ID = confluenceSpaceData.id
-    CONFLUENCE_SPACE_NAME = confluenceSpaceData.name
-
-    const requestBody = {
-      type: 'long',
-      title: CONFLUENCE_PAGE_TITLE,
-      space: {
-        key: CONFLUENCE_SPACE_KEY
-      },
-      spaceId: CONFLUENCE_SPACE_ID,
-      body: {
-        storage: {
-          value: JSON.stringify('<h1>heres the page</h1>'),
-          representation: 'storage'
-        }
-      }
-    }
-
-    const confluenceResponse = await fetchAsync(
-      `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_CONTENT_API_PATH}/pages`,
-      {
-        method: 'POST',
         headers,
-        body: JSON.stringify(requestBody)
+        redirect: 'follow'
       }
     )
+
+    // CONFLUENCE_SPACE_ID = confluenceSpaceData.id
+    // CONFLUENCE_SPACE_NAME = confluenceSpaceData.name
+
+    // const requestBody = {
+    //   type: 'long',
+    //   title: CONFLUENCE_PAGE_TITLE,
+    //   space: {
+    //     key: CONFLUENCE_SPACE_KEY
+    //   },
+    //   spaceId: CONFLUENCE_SPACE_ID,
+    //   body: {
+    //     storage: {
+    //       value: JSON.stringify('Hello world.'),
+    //       representation: 'storage'
+    //     }
+    //   }
+    // }
+
+    // const confluenceResponse = await fetchAsync(
+    //   `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_CONTENT_API_PATH}/pages`,
+    //   {
+    //     method: 'POST',
+    //     headers,
+    //     body: JSON.stringify(requestBody)
+    //   }
+    // )
 
     core.debug(`Creating Release Page under ${CONFLUENCE_SPACE_NAME} ...`)
   } catch (confluenceErrors) {
+    console.log('🚀 ~ run ~ confluenceErrors:', confluenceErrors)
     errorLogger(confluenceErrors)
     core.setFailed(`Error: ${confluenceErrors.message}`)
   }

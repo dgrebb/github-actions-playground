@@ -13,17 +13,23 @@
  */
 async function fetchAsync(url, options) {
   const response = await fetch(url, options)
+  console.log('🚀 ~ fetchAsync ~ response:', response)
   if (!response.ok) throw new Error(response.status)
   return response.json()
 }
 
-function errorLogger(errorArray) {
-  errorArray.map(error => {
-    const { status, code, title, details } = error
-    console.error(`----------------- API ERROR -----------------`)
-    console.table(error)
-    console.error(`----------------- END ERROR -----------------`)
-  })
+function errorLogger(errorData) {
+  if (Array.isArray(errorData)) {
+    errorData.map(error => {
+      console.error(`----------------- API ERROR -----------------`)
+      console.table(error)
+      console.error(`----------------- END ERROR -----------------`)
+    })
+  } else {
+    console.info(`----------------- API ERROR -----------------`)
+    console.error(errorData)
+    console.info(`----------------- END ERROR -----------------`)
+  }
 }
 
 module.exports = { fetchAsync, errorLogger }
@@ -44,7 +50,7 @@ module.exports = { ...api }
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(4237)
-const { fetchAsync, jiraErrorLogger } = __nccwpck_require__(686)
+const { fetchAsync, errorLogger } = __nccwpck_require__(686)
 
 /**
  * Creates headers for Jira API requests.
@@ -168,7 +174,7 @@ async function run() {
         core.setOutput('JIRA_RELEASE_NAME', JIRA_RELEASE_NAME)
         core.setOutput('JIRA_VERSION_URL', JIRA_RELEASE_URL)
       } catch (jiraErrors) {
-        jiraErrorLogger(jiraErrors)
+        errorLogger(jiraErrors)
         if (jiraErrors.message === '400') {
           // Suggest a new identifier if there's a conflict
           suggestedIdentifier = incrementIdentifier(JIRA_RELEASE_IDENTIFIER)

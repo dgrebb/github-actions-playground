@@ -13,17 +13,23 @@
  */
 async function fetchAsync(url, options) {
   const response = await fetch(url, options)
+  console.log('🚀 ~ fetchAsync ~ response:', response)
   if (!response.ok) throw new Error(response.status)
   return response.json()
 }
 
-function errorLogger(errorArray) {
-  errorArray.map(error => {
-    const { status, code, title, details } = error
-    console.error(`----------------- API ERROR -----------------`)
-    console.table(error)
-    console.error(`----------------- END ERROR -----------------`)
-  })
+function errorLogger(errorData) {
+  if (Array.isArray(errorData)) {
+    errorData.map(error => {
+      console.error(`----------------- API ERROR -----------------`)
+      console.table(error)
+      console.error(`----------------- END ERROR -----------------`)
+    })
+  } else {
+    console.info(`----------------- API ERROR -----------------`)
+    console.error(errorData)
+    console.info(`----------------- END ERROR -----------------`)
+  }
 }
 
 module.exports = { fetchAsync, errorLogger }
@@ -44,7 +50,7 @@ module.exports = { ...api }
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(4237)
-const { fetchAsync } = __nccwpck_require__(686)
+const { fetchAsync, errorLogger } = __nccwpck_require__(686)
 
 /**
  * Creates headers for Jira API requests.
@@ -119,46 +125,52 @@ async function run() {
 
   try {
     // Fetch Confluence Space data
+    console.log('ERRORS ---------------------------------------------- ')
+    console.log(
+      `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_META_API_PATH}/space/${CONFLUENCE_SPACE_KEY}`
+    )
+
     const confluenceSpaceData = await fetchAsync(
       `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_META_API_PATH}/space/${CONFLUENCE_SPACE_KEY}`,
       {
         method: 'GET',
-        headers
-      }
-    )
-
-    CONFLUENCE_SPACE_ID = confluenceSpaceData.id
-    CONFLUENCE_SPACE_NAME = confluenceSpaceData.name
-
-    const requestBody = {
-      type: 'long',
-      title: CONFLUENCE_PAGE_TITLE,
-      space: {
-        key: CONFLUENCE_SPACE_KEY
-      },
-      spaceId: CONFLUENCE_SPACE_ID,
-      body: {
-        storage: {
-          value: JSON.stringify('<h1>heres the page</h1>'),
-          representation: 'storage'
-        }
-      }
-    }
-
-    const jiraResponse = await fetchAsync(
-      `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_CONTENT_API_PATH}/pages`,
-      {
-        method: 'POST',
         headers,
-        body: JSON.stringify(requestBody)
+        redirect: 'follow'
       }
     )
+
+    // CONFLUENCE_SPACE_ID = confluenceSpaceData.id
+    // CONFLUENCE_SPACE_NAME = confluenceSpaceData.name
+
+    // const requestBody = {
+    //   type: 'long',
+    //   title: CONFLUENCE_PAGE_TITLE,
+    //   space: {
+    //     key: CONFLUENCE_SPACE_KEY
+    //   },
+    //   spaceId: CONFLUENCE_SPACE_ID,
+    //   body: {
+    //     storage: {
+    //       value: JSON.stringify('Hello world.'),
+    //       representation: 'storage'
+    //     }
+    //   }
+    // }
+
+    // const confluenceResponse = await fetchAsync(
+    //   `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_CONTENT_API_PATH}/pages`,
+    //   {
+    //     method: 'POST',
+    //     headers,
+    //     body: JSON.stringify(requestBody)
+    //   }
+    // )
 
     core.debug(`Creating Release Page under ${CONFLUENCE_SPACE_NAME} ...`)
-  } catch (error) {
-    // Fail the workflow run if an error occurs
-    console.error('Error message:', error.message)
-    core.setFailed(`Error: ${error.message}`)
+  } catch (confluenceErrors) {
+    console.log('🚀 ~ run ~ confluenceErrors:', confluenceErrors)
+    errorLogger(confluenceErrors)
+    core.setFailed(`Error: ${confluenceErrors.message}`)
   }
   core.summary.write({ overwrite: false })
 }

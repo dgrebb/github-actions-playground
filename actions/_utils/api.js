@@ -7,17 +7,23 @@
  */
 async function fetchAsync(url, options) {
   const response = await fetch(url, options)
+  console.log('🚀 ~ fetchAsync ~ response:', response)
   if (!response.ok) throw new Error(response.status)
   return response.json()
 }
 
-function errorLogger(errorArray) {
-  errorArray.map(error => {
-    const { status, code, title, details } = error
-    console.error(`----------------- API ERROR -----------------`)
-    console.table(error)
-    console.error(`----------------- END ERROR -----------------`)
-  })
+function errorLogger(errorData) {
+  if (Array.isArray(errorData)) {
+    errorData.map(error => {
+      console.error(`----------------- API ERROR -----------------`)
+      console.table(error)
+      console.error(`----------------- END ERROR -----------------`)
+    })
+  } else {
+    console.info(`----------------- API ERROR -----------------`)
+    console.error(errorData)
+    console.info(`----------------- END ERROR -----------------`)
+  }
 }
 
 module.exports = { fetchAsync, errorLogger }
