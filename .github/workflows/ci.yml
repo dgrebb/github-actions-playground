@@ -16,8 +16,8 @@ permissions:
   contents: read
 
 jobs:
-  test-javascript:
-    name: Check formatting, run tests, and validate Action bundles.
+  format:
+    name: Check Source Formatting
     runs-on: ubuntu-latest
 
     steps:
@@ -37,17 +37,43 @@ jobs:
         id: pnpm-format-check
         run: pnpm fmt.check
 
+  lint:
+    name: Lint Actions and Utils
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
+          token: ${{ github.token }}
+          show-progress: true
+          fetch-depth: 0
+
+      - name: Install Dependencies
+        uses: ./.github/actions/install-cache-deps
       - name: 🧹 Lint
         id: pnpm-lint
         run: pnpm lint
 
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
+          token: ${{ github.token }}
+          show-progress: true
+          fetch-depth: 0
+
+      - name: Install Dependencies
+        uses: ./.github/actions/install-cache-deps
+
       - name: 🎓 Test
         id: pnpm-test
         run: pnpm test
-
-      - name: where is the file
-        run: ls -la ./.github/workflows
-
-      - name: 📦 Validate Actions Bundles
-        id: validate-actions
-        uses: ./.github/workflows/actions-validate.yml
