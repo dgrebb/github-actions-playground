@@ -12,7 +12,7 @@ inputs:
   JIRA_API_URL:
     description: "Jira API URL."
     required: true
-  JIRA_API_TOKEN:
+  JIRA_API_KEY:
     description: "Jira API TOKEN."
     required: true
   JIRA_API_USER:

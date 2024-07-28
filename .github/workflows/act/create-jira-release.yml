@@ -44,7 +44,7 @@ jobs:
         with:
           JIRA_URL: "some kind of test"
           JIRA_API_URL: "some kind of test"
-          JIRA_API_TOKEN: "some kind of test"
+          JIRA_API_KEY: "some kind of test"
           JIRA_API_USER: "some kind of test"
           JIRA_PROJECT_KEY: "some kind of test"
           JIRA_RELEASE_IDENTIFIER: "some kind of test"

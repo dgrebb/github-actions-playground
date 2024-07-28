@@ -48,7 +48,7 @@ jobs:
         with:
           JIRA_URL: ${{ vars.JIRA_URL }}
           JIRA_API_URL: ${{ vars.JIRA_API_URL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_API_KEY: ${{ secrets.JIRA_API_KEY }}
           JIRA_API_USER: ${{ secrets.JIRA_API_USER }}
           JIRA_PROJECT_KEYS: ${{ inputs.JIRA_PROJECT_KEYS }}
           JIRA_RELEASE_IDENTIFIER: ${{ inputs.JIRA_RELEASE_IDENTIFIER }}

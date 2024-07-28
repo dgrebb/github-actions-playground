@@ -53,7 +53,7 @@ async function run() {
   const CONFLUENCE_API_SPACE_PATH = core.getInput('CONFLUENCE_API_SPACE_PATH', {
     required: true
   })
-  const CONFLUENCE_API_TOKEN = core.getInput('CONFLUENCE_API_TOKEN', {
+  const CONFLUENCE_API_KEY = core.getInput('CONFLUENCE_API_KEY', {
     required: true
   })
   const CONFLUENCE_API_USER = core.getInput('CONFLUENCE_API_USER', {
@@ -62,7 +62,7 @@ async function run() {
 
   const headers = createConfluenceHeaders(
     CONFLUENCE_API_USER,
-    CONFLUENCE_API_TOKEN
+    CONFLUENCE_API_KEY
   )
   let CONFLUENCE_SPACE_NAME
   let CONFLUENCE_SPACE_ID

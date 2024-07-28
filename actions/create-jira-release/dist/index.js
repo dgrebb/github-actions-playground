@@ -75,14 +75,14 @@ async function run() {
   core.debug('Setting up workflow values...')
   const JIRA_URL = core.getInput('JIRA_URL', { required: false })
   const JIRA_API_URL = core.getInput('JIRA_API_URL', { required: true })
-  const JIRA_API_TOKEN = core.getInput('JIRA_API_TOKEN', { required: true })
+  const JIRA_API_KEY = core.getInput('JIRA_API_KEY', { required: true })
   const JIRA_API_USER = core.getInput('JIRA_API_USER', { required: true })
   const JIRA_PROJECT_KEYS = core
     .getInput('JIRA_PROJECT_KEYS', { required: true })
     .split(',')
     .map(key => key.trim())
 
-  const headers = createJiraHeaders(JIRA_API_USER, JIRA_API_TOKEN)
+  const headers = createJiraHeaders(JIRA_API_USER, JIRA_API_KEY)
   let JIRA_PROJECT_NAME
   let JIRA_RELEASE_IDENTIFIER
   let JIRA_RELEASE_NAME
