@@ -1,0 +1,42 @@
+name: "🚥 Create Release Page"
+run-name: "🚥 Create Confluence Release Page: ${{ inputs.CONFLUENCE_PAGE_TITLE }}: `R${{ inputs.JIRA_RELEASE_IDENTIFIER }}`"
+
+on:
+  workflow_dispatch:
+    inputs:
+      CONFLUENCE_SPACE_KEY:
+        type: choice
+        description: "The Confluence space key in which this page will be created."
+        required: true
+        options:
+          - RM
+          - DG
+      CONFLUENCE_PAGE_TITLE:
+        description: "The title for the Confluence Page."
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        # Note many defaults are explicity included below for implicit documentation
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
+          token: ${{ github.token }}
+          show-progress: true
+          fetch-depth: 0
+
+      - name: "Create Release Page"
+        uses: ./actions/create-release-page
+        with:
+          CONFLUENCE_URL: ${{ vars.CONFLUENCE_URL }}
+          CONFLUENCE_API_URL: ${{ vars.CONFLUENCE_API_URL }}
+          CONFLUENCE_API_PAGE_PATH: ${{ vars.CONFLUENCE_API_PAGE_PATH }}
+          CONFLUENCE_API_SPACE_PATH: ${{ vars.CONFLUENCE_API_SPACE_PATH }}
+          CONFLUENCE_API_USERNAME: "${{ secrets.CONFLUENCE_API_USERNAME }}"
+          CONFLUENCE_API_TOKEN: "${{ secrets.CONFLUENCE_API_TOKEN }}"
+          CONFLUENCE_SPACE_KEY: ${{ inputs.CONFLUENCE_SPACE_KEY }}
+          CONFLUENCE_PAGE_TITLE: ${{ inputs.CONFLUENCE_PAGE_TITLE }}

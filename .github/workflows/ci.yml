@@ -45,6 +45,9 @@ jobs:
         id: pnpm-test
         run: pnpm test
 
+      - name: where is the file
+        run: ls -la ./.github/workflows
+
       - name: 📦 Validate Actions Bundles
         id: validate-actions
         uses: ./.github/workflows/check.yml
