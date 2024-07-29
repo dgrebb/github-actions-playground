@@ -146,8 +146,20 @@ async function run() {
       // TODO: Logic for pages with Jira release inputs
     }
 
+    let pageBody = `
+    <h1>A new Release Page for ${JIRA_RELEASE_NAMES}</h1>
+    <p>Body</p>
+    `
+
     if (RELEASE_PAGE_INCLUDE_JIRA_ISSUES && JIRA_RELEASE_NAMES) {
+      // Add the Jira Issues Macro and JQL Query
       JQL_QUERY = `fixVersion in (${JIRA_RELEASE_NAMES})`
+      pageBody += `
+        <ac:structured-macro ac:name="jira" ac:schema-version="1">
+          <ac:parameter ac:name="jqlQuery">${JQL_QUERY}</ac:parameter>
+          <ac:parameter ac:name="columns">key,summary,status,assignee</ac:parameter>
+        </ac:structured-macro>
+      `
     }
 
     const requestBody = {
@@ -159,14 +171,7 @@ async function run() {
       spaceId: CONFLUENCE_SPACE_ID,
       body: {
         storage: {
-          value: `
-            <h1>A new Release Page for ${JIRA_RELEASE_NAMES}</h1>
-            <p>Body</p>
-            <ac:structured-macro ac:name="jira" ac:schema-version="1">
-              <ac:parameter ac:name="jqlQuery">${JQL_QUERY}</ac:parameter>
-              <ac:parameter ac:name="columns">key,summary,status,assignee</ac:parameter>
-            </ac:structured-macro>
-          `.trim(),
+          value: pageBody.trim(),
           representation: 'storage'
         }
       }

@@ -37,6 +37,5 @@ outputs:
     description: "The resulting Jira Version URL(s)."
 
 runs:
-  using: "node20" # enum of `0 = "node12", 1 = "node16", 2 = "nod20"`, oddly
-  # NOTE: https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsusing
+  using: "node20"
   main: dist/index.js
