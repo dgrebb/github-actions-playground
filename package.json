@@ -21,15 +21,14 @@
     "node": ">=20"
   },
   "scripts": {
-    "act": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows --quiet",
-    "act.all": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows --quiet",
-    "act.cjr": "act -s GITHUB_TOKEN=$(pass github/act-pat) --eventpath .github/__mocks__/cja-payload.json --workflows .github/workflows/build/create-jira-release.yml",
-    "at": "pnpm act.test",
-    "act.logs": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows/build",
-    "act.verbose": "act -s GITHUB_TOKEN=$(pass github/act-pat) --workflows .github/workflows/build --verbose",
+    "act": "act --secret-file .github/workflows/act/.secrets --var-file .github/workflows/act/.env --workflows .github/workflows --quiet",
+    "act.all": "act --secret-file .github/workflows/act/.secrets --var-file .github/workflows/act/.env --workflows .github/workflows/act --quiet",
+    "act.cjr": "act --verbose --secret-file .github/workflows/act/.secrets --var-file .github/workflows/act/.env --eventpath .github/workflows/act/__mocks__/cjr-payload.json --workflows .github/workflows/act/create-jira-release.yml",
+    "act.crp": "act --quiet --secret-file .github/workflows/act/.secrets --var-file .github/workflows/act/.env --eventpath .github/workflows/act/__mocks__/crp-payload.json --workflows .github/workflows/act/create-release-page.yml",
+    "act.verbose": "act --secret-file .github/workflows/act/.secrets --var-file .github/workflows/act/.env --workflows .github/workflows/act --verbose",
     "all": "pnpm fmt && pnpm lint && pnpm test && pnpm coverage && pnpm build",
-    "build": "pnpm i && pnpm -r build",
-    "build.watch": "pnpm i && pnpm -r build.watch",
+    "build": "pnpm -r build",
+    "build.watch": "nodemon",
     "ci-test": "npx jest",
     "coverage": "npx make-coverage-badge --output-path ./badges/coverage.svg",
     "eslint": "eslint",
@@ -38,7 +37,20 @@
     "lint": "pnpm -r lint",
     "test": "npx jest"
   },
-  "license": "MIT",
+  "nodemonConfig": {
+    "ignore": [
+      "**/__tests__/**",
+      "**/__mocks__/**",
+      "**/dist/*",
+      "**/build/*"
+    ],
+    "watch": [
+      "./actions/**/*"
+    ],
+    "exec": "pnpm build",
+    "delay": 2500
+  },
+  "license": "ISC",
   "eslintConfig": {
     "extends": "./.github/linters/.eslintrc.yml"
   },
@@ -80,6 +92,7 @@
     "eslint-plugin-jest": "^28.6.0",
     "jest": "^29.7.0",
     "make-coverage-badge": "^1.2.0",
+    "nodemon": "^3.1.4",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1"
   }

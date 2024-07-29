@@ -108,7 +108,7 @@ SOFTWARE.
 
 
 utils
-MIT
+ISC
 
 uuid
 MIT

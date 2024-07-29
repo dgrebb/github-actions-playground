@@ -7,22 +7,20 @@ inputs:
     required: true
   CONFLUENCE_API_URL:
     description: "Confluence API URL."
+    required: false
+  CONFLUENCE_API_PATH:
+    description: "Confluence API path."
     required: true
-  CONFLUENCE_API_PAGE_PATH:
-    description: "Confluence API path for Pages."
-    required: true
-  CONFLUENCE_API_SPACE_PATH:
-    description: "Confluence API path for Spaces."
-    required: true
-  CONFLUENCE_API_TOKEN:
+  CONFLUENCE_API_KEY:
     description: "Confluence API TOKEN."
     required: true
-  CONFLUENCE_API_USERNAME:
+  CONFLUENCE_API_USER:
     description: "Jira API USERNAME."
     required: true
   CONFLUENCE_SPACE_KEY:
     description: "Conflunece Space in which to create the page."
     required: true
+    default: "RM"
   CONFLUENCE_PAGE_TITLE:
     description: "Title of the Confluence Page."
     default: "$(date '+%y.%m.%d-%T')"

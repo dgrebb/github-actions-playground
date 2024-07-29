@@ -1,16 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 686:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-const jira = __nccwpck_require__(2393)
-module.exports = { ...jira }
-
-
-/***/ }),
-
-/***/ 2393:
+/***/ 5998:
 /***/ ((module) => {
 
 /**
@@ -26,7 +17,30 @@ async function fetchAsync(url, options) {
   return response.json()
 }
 
-module.exports = { fetchAsync }
+function errorLogger(errorData) {
+  if (Array.isArray(errorData)) {
+    errorData.map(error => {
+      console.error(`----------------- API ERROR -----------------`)
+      console.table(error)
+      console.error(`----------------- END ERROR -----------------`)
+    })
+  } else {
+    console.info(`----------------- API ERROR -----------------`)
+    console.error(errorData)
+    console.info(`----------------- END ERROR -----------------`)
+  }
+}
+
+module.exports = { fetchAsync, errorLogger }
+
+
+/***/ }),
+
+/***/ 686:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const api = __nccwpck_require__(5998)
+module.exports = { ...api }
 
 
 /***/ }),
@@ -35,7 +49,7 @@ module.exports = { fetchAsync }
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(4237)
-const { fetchAsync } = __nccwpck_require__(686)
+const { fetchAsync, errorLogger } = __nccwpck_require__(686)
 
 /**
  * Creates headers for Jira API requests.
@@ -73,36 +87,37 @@ function incrementIdentifier(identifier) {
  */
 async function run() {
   core.debug('Setting up workflow values...')
-  const JIRA_URL = core.getInput('JIRA_URL', { required: false })
-  const JIRA_API_URL = core.getInput('JIRA_API_URL', { required: true })
-  const JIRA_API_TOKEN = core.getInput('JIRA_API_TOKEN', { required: true })
+  const JIRA_URL = core.getInput('JIRA_URL', { required: true })
+  const JIRA_API_URL = core.getInput('JIRA_API_URL', { required: false })
+  const JIRA_API_PATH = core.getInput('JIRA_API_PATH', { required: true })
+  const JIRA_API_KEY = core.getInput('JIRA_API_KEY', { required: true })
   const JIRA_API_USER = core.getInput('JIRA_API_USER', { required: true })
   const JIRA_PROJECT_KEYS = core
     .getInput('JIRA_PROJECT_KEYS', { required: true })
     .split(',')
     .map(key => key.trim())
+  const JIRA_RELEASE_DESCRIPTION = core.getInput('JIRA_RELEASE_DESCRIPTION', {
+    required: false
+  })
+  const JIRA_RELEASE_NOW = core.getBooleanInput('JIRA_RELEASE_NOW', {
+    required: false
+  })
 
-  const headers = createJiraHeaders(JIRA_API_USER, JIRA_API_TOKEN)
+  const JIRA_RELEASE_IDENTIFIER = core.getInput('JIRA_RELEASE_IDENTIFIER', {
+    required: true
+  })
+
+  const headers = createJiraHeaders(JIRA_API_USER, JIRA_API_KEY)
+
   let JIRA_PROJECT_NAME
-  let JIRA_RELEASE_IDENTIFIER
   let JIRA_RELEASE_NAME
   let suggestedIdentifier
 
   try {
-    JIRA_RELEASE_IDENTIFIER = core.getInput('JIRA_RELEASE_IDENTIFIER', {
-      required: true
-    })
-    const JIRA_RELEASE_DESCRIPTION = core.getInput('JIRA_RELEASE_DESCRIPTION', {
-      required: false
-    })
-    const JIRA_RELEASE_NOW = core.getBooleanInput('JIRA_RELEASE_NOW', {
-      required: true
-    })
-
     for (const JIRA_PROJECT_KEY of JIRA_PROJECT_KEYS) {
       // Fetch the Jira project data
       const jiraProjectData = await fetchAsync(
-        `${JIRA_API_URL}/project/${JIRA_PROJECT_KEY}`,
+        `${JIRA_API_URL ? JIRA_API_URL : JIRA_URL}/${JIRA_API_PATH}/project/${JIRA_PROJECT_KEY}`,
         {
           method: 'GET',
           headers
@@ -118,17 +133,28 @@ async function run() {
 
       // Create Jira version
       try {
-        const jiraResponse = await fetchAsync(`${JIRA_API_URL}/version`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({
-            archived: false,
-            description: JIRA_RELEASE_DESCRIPTION,
-            name: JIRA_RELEASE_NAME,
-            projectId: JIRA_PROJECT_ID,
-            released: JIRA_RELEASE_NOW
-          })
-        })
+        const requestBody = {
+          archived: false,
+          name: JIRA_RELEASE_NAME,
+          projectId: JIRA_PROJECT_ID
+        }
+
+        if (JIRA_RELEASE_DESCRIPTION) {
+          requestBody.description = JIRA_RELEASE_DESCRIPTION
+        }
+
+        if (JIRA_RELEASE_NOW) {
+          requestBody.released = JIRA_RELEASE_NOW
+        }
+
+        const jiraResponse = await fetchAsync(
+          `${JIRA_API_URL ? JIRA_API_URL : JIRA_URL}/${JIRA_API_PATH}/version`,
+          {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(requestBody)
+          }
+        )
 
         const JIRA_RELEASE_ID = jiraResponse.id
         const JIRA_RELEASE_URL = `${JIRA_URL}/projects/${JIRA_PROJECT_KEY}/versions/${JIRA_RELEASE_ID}`
@@ -146,8 +172,9 @@ async function run() {
         // Set outputs for other workflow steps to use
         core.setOutput('JIRA_RELEASE_NAME', JIRA_RELEASE_NAME)
         core.setOutput('JIRA_VERSION_URL', JIRA_RELEASE_URL)
-      } catch (postError) {
-        if (postError.message === '400') {
+      } catch (jiraErrors) {
+        errorLogger(jiraErrors)
+        if (jiraErrors.message === '400') {
           // Suggest a new identifier if there's a conflict
           suggestedIdentifier = incrementIdentifier(JIRA_RELEASE_IDENTIFIER)
           core.summary.addRaw(
@@ -158,8 +185,8 @@ async function run() {
             `${JIRA_PROJECT_NAME} already has a version named ${JIRA_RELEASE_NAME}. ` +
               `Suggested next version: ${JIRA_PROJECT_KEY}-${suggestedIdentifier}. Please update the workflow inputs and re-run.`
           )
-        } else if (postError.message === '401') {
-          core.summary.addRaw(`### 401`, true)
+        } else if (jiraErrors.message === '401') {
+          core.summary.addRaw(`### 🔐 401`, true)
           core.summary.addRaw(
             `The request has invalid credentials, or no credentials when credentials are required, or the user doesn't have permissions to do that. Check Jira Project permissions for [${JIRA_PROJECT_KEY}](${JIRA_URL}/projects/${JIRA_PROJECT_KEY}).`,
             true
@@ -167,8 +194,8 @@ async function run() {
           core.setFailed(
             `It looks like the Jira API user doesn't have access to [${JIRA_PROJECT_KEY}](${JIRA_URL}/projects/${JIRA_PROJECT_KEY}).`
           )
-        } else if (postError.message === '404') {
-          core.summary.addRaw(`### 404`, true)
+        } else if (jiraErrors.message === '404') {
+          core.summary.addRaw(`### ⛔️ 404`, true)
           core.summary.addRaw(
             `Not Found	We don't have a route registered there, e.g. it's not possible to GET /1/cards, or POST /1/elephants. Or the model the request is trying to operate on couldn't be found. Or some nested resource can't be found.`,
             true
@@ -177,7 +204,17 @@ async function run() {
             `The Jira API returned a 401 Unauthorized status. Do the included projects exist under the provided Jira Project Key: [${JIRA_PROJECT_KEY}](${JIRA_URL}/projects/${JIRA_PROJECT_KEY})?`
           )
         } else {
-          throw postError
+          const { status, code, title, detail } = jiraErrors.errors[0]
+          core.setFailed(
+            `Jira API Error! ${status} ${code}. See the Summary for details`
+          )
+          core.summary.addRaw(`### ⚠️ Unhandled Jira Error`)
+          core.summary.addRaw(`#### ${status}: ${code}`)
+          core.addCodeBlock(`${title}`)
+          if (detail) {
+            core.addCodeBlock(`${detail}`)
+          }
+          core.summary.addRaw("This is a Jira error we don't usually see.")
         }
       }
     }

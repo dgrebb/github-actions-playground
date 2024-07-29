@@ -3,10 +3,18 @@ run-name: "Create Confluence Release Page"
 
 on:
   workflow_dispatch:
-  workflow_call:
+    inputs:
+      CONFLUENCE_SPACE_KEY:
+        description: "The Confluence space key in which this page will be created."
+        required: true
+        default: "RM"
+
+      CONFLUENCE_PAGE_TITLE:
+        description: "The title for the Confluence Page."
 
 jobs:
-  test:
+  create-release-page:
+    name: Create Release Page
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,11 +30,10 @@ jobs:
       - name: "Create Release Page"
         uses: ./actions/create-release-page
         with:
-          CONFLUENCE_URL: "wow secret"
-          CONFLUENCE_API_URL: "wow secret"
-          CONFLUENCE_API_PAGE_PATH: "wow secret"
-          CONFLUENCE_API_SPACE_PATH: "wow secret"
-          CONFLUENCE_API_TOKEN: "wow secret"
-          CONFLUENCE_API_USERNAME: "wow secret"
-          CONFLUENCE_SPACE_KEY: "wow secret"
-          CONFLUENCE_PAGE_TITLE: "wow secret"
+          CONFLUENCE_URL: ${{ vars.CONFLUENCE_URL }}
+          CONFLUENCE_API_URL: ${{ vars.CONFLUENCE_API_URL }}
+          CONFLUENCE_API_PATH: ${{ vars.CONFLUENCE_API_PATH }}
+          CONFLUENCE_API_USER: "${{ secrets.CONFLUENCE_API_USER }}"
+          CONFLUENCE_API_KEY: "${{ secrets.CONFLUENCE_API_KEY }}"
+          CONFLUENCE_SPACE_KEY: "${{ inputs.CONFLUENCE_SPACE_KEY }}"
+          CONFLUENCE_PAGE_TITLE: "${{ inputs.CONFLUENCE_PAGE_TITLE }}"

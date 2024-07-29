@@ -1,5 +1,5 @@
 const core = require('@actions/core')
-const { fetchAsync } = require('utils')
+const { fetchAsync, errorLogger } = require('utils')
 
 /**
  * Creates headers for Jira API requests.
@@ -43,68 +43,70 @@ async function run() {
   const CONFLUENCE_PAGE_TITLE = core.getInput('CONFLUENCE_PAGE_TITLE', {
     required: true
   })
-  const CONFLUENCE_URL = core.getInput('CONFLUENCE_URL', { required: false })
+  const CONFLUENCE_URL = core.getInput('CONFLUENCE_URL', { required: true })
   const CONFLUENCE_API_URL = core.getInput('CONFLUENCE_API_URL', {
+    required: false
+  })
+  const CONFLUENCE_API_PATH = core.getInput('CONFLUENCE_API_PATH', {
     required: true
   })
-  const CONFLUENCE_API_PAGE_PATH = core.getInput('CONFLUENCE_API_PAGE_PATH', {
+  const CONFLUENCE_API_KEY = core.getInput('CONFLUENCE_API_KEY', {
     required: true
   })
-  const CONFLUENCE_API_SPACE_PATH = core.getInput('CONFLUENCE_API_SPACE_PATH', {
-    required: true
-  })
-  const CONFLUENCE_API_TOKEN = core.getInput('CONFLUENCE_API_TOKEN', {
-    required: true
-  })
-  const CONFLUENCE_API_USER = core.getInput('CONFLUENCE_API_USERNAME', {
+  const CONFLUENCE_API_USER = core.getInput('CONFLUENCE_API_USER', {
     required: true
   })
 
   const headers = createConfluenceHeaders(
     CONFLUENCE_API_USER,
-    CONFLUENCE_API_TOKEN
+    CONFLUENCE_API_KEY
   )
+
   let CONFLUENCE_SPACE_NAME
   let CONFLUENCE_SPACE_ID
-  let suggestedIdentifier
+  let suggestedPageTitle
 
   try {
-    // Fetch Confluence Space data
     const confluenceSpaceData = await fetchAsync(
-      `${CONFLUENCE_URL}/${CONFLUENCE_API_SPACE_PATH}/${CONFLUENCE_SPACE_KEY}`,
+      `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_API_PATH}/spaces?keys=${CONFLUENCE_SPACE_KEY}`,
       {
         method: 'GET',
-        headers
+        headers,
+        redirect: 'follow'
       }
     )
 
-    CONFLUENCE_SPACE_ID = confluenceSpaceData.id
-    CONFLUENCE_SPACE_NAME = confluenceSpaceData.name
+    CONFLUENCE_SPACE_ID = confluenceSpaceData.results[0].id
+    CONFLUENCE_SPACE_NAME = confluenceSpaceData.results[0].name
 
-    const jiraResponse = await fetchAsync(`${CONFLUENCE_API_URL}/version`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        type: 'long',
-        title: CONFLUENCE_PAGE_TITLE,
-        space: {
-          key: CONFLUENCE_SPACE_KEY
-        },
-        spaceId: CONFLUENCE_SPACE_ID,
-        body: {
-          storage: {
-            value: '<h1>heres the page</h1>',
-            representation: 'storage'
-          }
+    const requestBody = {
+      type: 'long',
+      title: CONFLUENCE_PAGE_TITLE,
+      space: {
+        key: CONFLUENCE_SPACE_KEY
+      },
+      spaceId: CONFLUENCE_SPACE_ID,
+      body: {
+        storage: {
+          value: JSON.stringify('Hello world.'),
+          representation: 'storage'
         }
-      })
-    })
+      }
+    }
+
+    const confluenceResponse = await fetchAsync(
+      `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_API_PATH}/pages`,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(requestBody)
+      }
+    )
 
     core.debug(`Creating Release Page under ${CONFLUENCE_SPACE_NAME} ...`)
-  } catch (error) {
-    // Fail the workflow run if an error occurs
-    console.error('Error message:', error.message)
-    core.setFailed(`Error: ${error.message}`)
+  } catch (confluenceErrors) {
+    errorLogger(confluenceErrors)
+    core.setFailed(`Error: ${confluenceErrors.message}`)
   }
   core.summary.write({ overwrite: false })
 }

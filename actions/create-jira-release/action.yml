@@ -2,24 +2,20 @@ name: "🚥 Create Jira Release"
 description: "Create a Jira 'Fix Version' for one or more projects."
 
 inputs:
-  WORKING_DIR:
-    description: "Working Directory"
-    required: false
-    default: "."
   JIRA_URL:
     description: "Jira Instance URL."
     required: true
   JIRA_API_URL:
-    description: "Jira API URL."
-    required: true
-  JIRA_API_TOKEN:
+    description: "Jira API URL, if on another domain."
+    required: false
+  JIRA_API_KEY:
     description: "Jira API TOKEN."
     required: true
   JIRA_API_USER:
     description: "Jira API User."
     required: true
   JIRA_PROJECT_KEYS:
-    description: "An array of Jira Project 'Keys'. Use quotes for fancy characters."
+    description: "An comma-separated list of Jira Project 'Keys'. Use quotes for fancy characters (Beta Feature)."
     required: true
     default: "RM"
   JIRA_RELEASE_IDENTIFIER:
@@ -27,12 +23,11 @@ inputs:
     required: true
     default: "YY.QQ.NN.I"
   JIRA_RELEASE_DESCRIPTION:
-    description: "Jira version description."
-    required: true
-    default: ""
+    description: "Jira version description. Shared across releases generated."
+    required: false
   JIRA_RELEASE_NOW:
     description: "Whether the version should be marked released."
-    required: true
+    required: false
     default: "false"
 
 outputs:

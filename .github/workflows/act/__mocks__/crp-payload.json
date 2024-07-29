@@ -1,0 +1,7 @@
+{
+  "action": "workflow_dispatch",
+  "inputs": {
+    "CONFLUENCE_SPACE_KEY": "RM",
+    "CONFLUENCE_PAGE_TITLE": "Some page"
+  }
+}
