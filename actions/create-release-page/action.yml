@@ -8,11 +8,8 @@ inputs:
   CONFLUENCE_API_URL:
     description: "Confluence API URL."
     required: false
-  CONFLUENCE_CONTENT_API_PATH:
-    description: "Confluence API path for Pages."
-    required: true
-  CONFLUENCE_META_API_PATH:
-    description: "Confluence API path for Spaces."
+  CONFLUENCE_API_PATH:
+    description: "Confluence API path."
     required: true
   CONFLUENCE_API_KEY:
     description: "Confluence API TOKEN."

@@ -13,7 +13,6 @@
  */
 async function fetchAsync(url, options) {
   const response = await fetch(url, options)
-  console.log('🚀 ~ fetchAsync ~ response:', response)
   if (!response.ok) throw new Error(response.status)
   return response.json()
 }
@@ -98,13 +97,7 @@ async function run() {
   const CONFLUENCE_API_URL = core.getInput('CONFLUENCE_API_URL', {
     required: false
   })
-  const CONFLUENCE_CONTENT_API_PATH = core.getInput(
-    'CONFLUENCE_CONTENT_API_PATH',
-    {
-      required: true
-    }
-  )
-  const CONFLUENCE_META_API_PATH = core.getInput('CONFLUENCE_META_API_PATH', {
+  const CONFLUENCE_API_PATH = core.getInput('CONFLUENCE_API_PATH', {
     required: true
   })
   const CONFLUENCE_API_KEY = core.getInput('CONFLUENCE_API_KEY', {
@@ -124,14 +117,8 @@ async function run() {
   let suggestedPageTitle
 
   try {
-    // Fetch Confluence Space data
-    console.log('ERRORS ---------------------------------------------- ')
-    console.log(
-      `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_META_API_PATH}/space/${CONFLUENCE_SPACE_KEY}`
-    )
-
     const confluenceSpaceData = await fetchAsync(
-      `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_META_API_PATH}/space/${CONFLUENCE_SPACE_KEY}`,
+      `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_API_PATH}/spaces?keys=${CONFLUENCE_SPACE_KEY}`,
       {
         method: 'GET',
         headers,
@@ -139,36 +126,35 @@ async function run() {
       }
     )
 
-    // CONFLUENCE_SPACE_ID = confluenceSpaceData.id
-    // CONFLUENCE_SPACE_NAME = confluenceSpaceData.name
+    CONFLUENCE_SPACE_ID = confluenceSpaceData.results[0].id
+    CONFLUENCE_SPACE_NAME = confluenceSpaceData.results[0].name
 
-    // const requestBody = {
-    //   type: 'long',
-    //   title: CONFLUENCE_PAGE_TITLE,
-    //   space: {
-    //     key: CONFLUENCE_SPACE_KEY
-    //   },
-    //   spaceId: CONFLUENCE_SPACE_ID,
-    //   body: {
-    //     storage: {
-    //       value: JSON.stringify('Hello world.'),
-    //       representation: 'storage'
-    //     }
-    //   }
-    // }
+    const requestBody = {
+      type: 'long',
+      title: CONFLUENCE_PAGE_TITLE,
+      space: {
+        key: CONFLUENCE_SPACE_KEY
+      },
+      spaceId: CONFLUENCE_SPACE_ID,
+      body: {
+        storage: {
+          value: JSON.stringify('Hello world.'),
+          representation: 'storage'
+        }
+      }
+    }
 
-    // const confluenceResponse = await fetchAsync(
-    //   `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_CONTENT_API_PATH}/pages`,
-    //   {
-    //     method: 'POST',
-    //     headers,
-    //     body: JSON.stringify(requestBody)
-    //   }
-    // )
+    const confluenceResponse = await fetchAsync(
+      `${CONFLUENCE_API_URL ? CONFLUENCE_API_URL : CONFLUENCE_URL}/${CONFLUENCE_API_PATH}/pages`,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(requestBody)
+      }
+    )
 
     core.debug(`Creating Release Page under ${CONFLUENCE_SPACE_NAME} ...`)
   } catch (confluenceErrors) {
-    console.log('🚀 ~ run ~ confluenceErrors:', confluenceErrors)
     errorLogger(confluenceErrors)
     core.setFailed(`Error: ${confluenceErrors.message}`)
   }

@@ -7,7 +7,6 @@
  */
 async function fetchAsync(url, options) {
   const response = await fetch(url, options)
-  console.log('🚀 ~ fetchAsync ~ response:', response)
   if (!response.ok) throw new Error(response.status)
   return response.json()
 }
