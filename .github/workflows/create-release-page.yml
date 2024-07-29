@@ -13,7 +13,10 @@ on:
           - DG
       CONFLUENCE_PAGE_TITLE:
         description: "The title for the Confluence Page."
-  workflow_call:
+
+      JIRA_RELEASE_NAMES:
+        description: "Easy entry of releases to include from Jira"
+        required: false
 
 jobs:
   create-release-page:
@@ -39,5 +42,5 @@ jobs:
           CONFLUENCE_API_KEY: "${{ secrets.CONFLUENCE_API_KEY }}"
           CONFLUENCE_SPACE_KEY: ${{ inputs.CONFLUENCE_SPACE_KEY }}
           CONFLUENCE_PAGE_TITLE: ${{ inputs.CONFLUENCE_PAGE_TITLE }}
-          JIRA_RELEASE_NAMES: "DG-R24.10.12.33, OPS-R24.10.12.33, RM-R24.10.12.33"
+          JIRA_RELEASE_NAMES: "${{ inputs.JIRA_RELEASE_NAMES }}"
           RELEASE_PAGE_INCLUDE_JIRA_ISSUES: true
