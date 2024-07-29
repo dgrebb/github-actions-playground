@@ -56,6 +56,18 @@ async function run() {
   const CONFLUENCE_API_USER = core.getInput('CONFLUENCE_API_USER', {
     required: true
   })
+  const JIRA_RELEASE_NAMES = core.getInput('JIRA_RELEASE_NAMES', {
+    required: false
+  })
+  const JIRA_RELEASE_LINKS = core.getInput('JIRA_RELEASE_LINKS', {
+    required: false
+  })
+  const RELEASE_PAGE_INCLUDE_JIRA_ISSUES = core.getInput(
+    'RELEASE_PAGE_INCLUDE_JIRA_ISSUES',
+    {
+      required: false
+    }
+  )
 
   const headers = createConfluenceHeaders(
     CONFLUENCE_API_USER,
@@ -64,6 +76,7 @@ async function run() {
 
   let CONFLUENCE_SPACE_NAME
   let CONFLUENCE_SPACE_ID
+  let JQL_QUERY
   let suggestedPageTitle
 
   try {
@@ -79,6 +92,14 @@ async function run() {
     CONFLUENCE_SPACE_ID = confluenceSpaceData.results[0].id
     CONFLUENCE_SPACE_NAME = confluenceSpaceData.results[0].name
 
+    if (JIRA_RELEASE_NAMES) {
+      // TODO: Logic for pages with Jira release inputs
+    }
+
+    if (RELEASE_PAGE_INCLUDE_JIRA_ISSUES && JIRA_RELEASE_NAMES) {
+      JQL_QUERY = `fixVersion in (${JIRA_RELEASE_NAMES})`
+    }
+
     const requestBody = {
       type: 'long',
       title: CONFLUENCE_PAGE_TITLE,
@@ -88,7 +109,14 @@ async function run() {
       spaceId: CONFLUENCE_SPACE_ID,
       body: {
         storage: {
-          value: JSON.stringify('Hello world.'),
+          value: `
+            <h1>A new Release Page for ${JIRA_RELEASE_NAMES}</h1>
+            <p>Body</p>
+            <ac:structured-macro ac:name="jira" ac:schema-version="1">
+              <ac:parameter ac:name="jqlQuery">${JQL_QUERY}</ac:parameter>
+              <ac:parameter ac:name="columns">key,summary,status,assignee</ac:parameter>
+            </ac:structured-macro>
+          `.trim(),
           representation: 'storage'
         }
       }

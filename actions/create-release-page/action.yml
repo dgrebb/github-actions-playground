@@ -24,6 +24,8 @@ inputs:
   CONFLUENCE_PAGE_TITLE:
     description: "Title of the Confluence Page."
     default: "$(date '+%y.%m.%d-%T')"
+  RELEASE_PAGE_INCLUDE_JIRA_ISSUES:
+    description: "Include a Jira Issues table on the page. Automatically populated by JQL with any provided Jira release inputs."
   JIRA_VERSION_NAMES:
     description: "Jira Version name."
   JIRA_VERSION_LINKS:
