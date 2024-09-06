@@ -1,0 +1,32 @@
+name: Sync Jira Issues to GitHub
+
+on:
+  workflow_dispatch: # Trigger manually
+  schedule:
+    - cron: "0 0 * * *" # Runs daily at midnight
+
+jobs:
+  sync_issues:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.head_ref || github.ref_name }}
+          token: ${{ github.token }}
+          show-progress: true
+          fetch-depth: 0
+
+      - name: 🛢 Install Dependencies
+        uses: ./.github/actions/install-cache-deps
+
+      - name: Sync Jira issues to GitHub
+        uses: ./actions/import-jira-issues
+        with:
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JIRA_HOST: ${{ secrets.JIRA_HOST }}
+          JIRA_PROJECT: ${{ secrets.JIRA_PROJECT_KEY }}
+          GITHUB_REPO: ${{ github.repository }}

@@ -1,0 +1,29 @@
+name: "🚥 Create Jira Release"
+description: "Create a Jira 'Fix Version' for one or more projects."
+
+inputs:
+  JIRA_API_TOKEN:
+    description: A Jira API Token or User Password
+    required: true
+  GITHUB_TOKEN:
+    description: The GitHub Token
+    required: true
+  JIRA_HOST:
+    description: The Jira Hostname (Domain)
+    required: true
+  JIRA_PROJECT:
+    description: The Jira Project Key
+    required: true
+  GITHUB_REPO:
+    description: The GitHub Repo to Sync Issues With
+    required: true
+
+outputs:
+  JIRA_RELEASE_NAME:
+    description: "The resulting Jira Version name(s)."
+  JIRA_VERSION_URL:
+    description: "The resulting Jira Version URL(s)."
+
+runs:
+  using: "node20"
+  main: dist/index.js

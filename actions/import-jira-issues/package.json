@@ -1,0 +1,32 @@
+{
+  "name": "import-jira-issues",
+  "version": "0.0.0",
+  "author": "dgrebb",
+  "private": true,
+  "homepage": "https://github.com/dgrebb#readme",
+  "main": "dist/index.js",
+  "scripts": {
+    "build.debug": "ncc build src/index.js -o build --source-map",
+    "build": "ncc build src/index.js -o dist --license licenses.txt",
+    "build.watch": "ncc build -w src/index.js -o dist --license licenses.txt",
+    "lint": "eslint ./src -c ../../.eslintrc.yml",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/dgrebb/github-actions-playground"
+  },
+  "keywords": [
+    "GitHub",
+    "Actions",
+    "JavaScript"
+  ],
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "utils": "workspace:*",
+    "@actions/core": "^1.10.1",
+    "@actions/github": "^6.0.0"
+  }
+}
