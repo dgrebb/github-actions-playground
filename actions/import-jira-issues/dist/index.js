@@ -2,7 +2,7 @@
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 558:
-/***/ (() => {
+/***/ ((module) => {
 
 const JIRA_HOST = process.env.JIRA_HOST
 const JIRA_PROJECT = process.env.JIRA_PROJECT
@@ -121,7 +121,7 @@ async function createGitHubIssue(title, body) {
 }
 
 // Sync Jira issues to GitHub issues and associate them with the project
-async function syncJiraToGitHub() {
+async function run() {
   try {
     const jiraIssues = await fetchJiraIssues()
 
@@ -149,7 +149,9 @@ async function syncJiraToGitHub() {
   }
 }
 
-syncJiraToGitHub()
+module.exports = {
+  run
+}
 
 
 /***/ })

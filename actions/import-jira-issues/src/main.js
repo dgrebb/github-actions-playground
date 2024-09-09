@@ -115,7 +115,7 @@ async function createGitHubIssue(title, body) {
 }
 
 // Sync Jira issues to GitHub issues and associate them with the project
-async function syncJiraToGitHub() {
+async function run() {
   try {
     const jiraIssues = await fetchJiraIssues()
 
@@ -143,4 +143,6 @@ async function syncJiraToGitHub() {
   }
 }
 
-syncJiraToGitHub()
+module.exports = {
+  run
+}
