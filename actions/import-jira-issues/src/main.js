@@ -7,14 +7,14 @@ const GITHUB_PROJECT_NUMBER = process.env.GITHUB_PROJECT_NUMBER // GitHub Projec
 
 // Adjust the status mapping to GitHub project custom fields
 const jiraStatusesToGitHubFields = {
-  Backlog: 'PENDING',
-  Defined: 'DEFINED',
-  'In Progress': 'IN_PROGRESS',
-  'Ready For Review': 'REVIEW',
-  'E2E Testing': 'TESTING',
-  Done: 'DONE',
-  Accepted: 'ACCEPTED',
-  Released: 'RELEASED'
+  Backlog: 'Backlog',
+  Defined: 'Todo',
+  'In Progress': 'In Progress',
+  'Ready For Review': 'Peer Review',
+  'E2E Testing': 'Testing',
+  Done: 'Done',
+  Accepted: 'Accepted',
+  Released: 'Archived'
 }
 
 /**
